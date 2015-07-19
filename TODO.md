@@ -1,0 +1,3 @@
+- Get resource-pool library involved for db connection pooling
+- Get some sort of authentication involved. Something we can use API keys with? Can wai-extra do this with its HTTP Basic?
+- Need real logging, try to adapt the logging we're using in ks-locate
