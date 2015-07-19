@@ -15,18 +15,19 @@ import TCE.Data.ReadConf ( readConfig )
 
 data Config = Config
    { webServerPort :: Int
-
-   , mongoServerIP :: String
-
-   , mongoUsername :: T.Text
-   , mongoPassword :: T.Text
-
-   , mongoDatabase :: T.Text
-
-   , mongoCollection :: T.Text
-
+   , mongoConf :: MongoConf
    , logPriority :: Priority
    , logPath :: FilePath
+   }
+   deriving (Read, Show)
+
+
+data MongoConf = MongoConf
+   { ip :: String
+   , username :: T.Text
+   , password :: T.Text
+   , database :: T.Text
+   , collection :: T.Text
    }
    deriving (Read, Show)
 

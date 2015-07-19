@@ -3,12 +3,17 @@
 
 import System.Environment ( getArgs )
 
-import qualified KS.Server.Config as C
+import KS.Server.Config
+import KS.Server.Log
 
 
 main :: IO ()
 main = do
    (confDir : _) <- getArgs
 
-   config <- C.loadConfig confDir
-   print config
+   config <- loadConfig confDir
+
+   initLogging (logPath config) (logPriority config)
+
+   noticeM lname "ks-server started"
+   debugM lname "This is a debug message"
