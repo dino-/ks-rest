@@ -13,7 +13,6 @@ main = do
 
    config <- loadConfig confDir
 
-   initLogging (logPath config) (logPriority config)
+   initLogging (logPriority config) (logPath config)
 
    noticeM lname "ks-server started"
-   debugM lname "This is a debug message"

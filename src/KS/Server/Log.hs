@@ -5,33 +5,28 @@ module KS.Server.Log
    ( initLogging, lname
 
    -- Re-exported from System.Log
-   , Priority (..), debugM, infoM, noticeM, warningM, errorM
-   , criticalM, alertM, emergencyM
+   , debugM, infoM, noticeM, warningM, errorM , criticalM, alertM, emergencyM
    )
    where
 
---import System.IO ( stdout )
-import System.Log.Formatter
+import System.Log.Formatter ( simpleLogFormatter )
 import System.Log.Handler ( setFormatter )
 import System.Log.Handler.Simple ( fileHandler )
 import System.Log.Logger
 
 
 lname :: String
-lname = "normal-output"
+lname = rootLoggerName
 
 
-{- Set up logging
--}
-initLogging :: FilePath -> Priority -> IO ()
-initLogging logFile priority = do
+initLogging :: Priority -> FilePath -> IO ()
+initLogging priority logFilePath = do
    -- Remove the root logger's default handler that writes every
    -- message to stderr!
-   updateGlobalLogger rootLoggerName removeHandler
-
-   -- Set up our logger
-   --h <- streamHandler stdout DEBUG
-   h <- fileHandler logFile DEBUG >>= \lh -> return $
-      setFormatter lh (simpleLogFormatter "[$time : $prio] $msg")
-   updateGlobalLogger lname $ setHandlers [h]
+   updateGlobalLogger lname removeHandler
    updateGlobalLogger lname $ setLevel priority
+
+   -- A file handler with timestamping
+   (flip setFormatter $ simpleLogFormatter "[$time : $prio] $msg")
+      <$> fileHandler logFilePath DEBUG
+      >>= updateGlobalLogger lname . addHandler
