@@ -3,6 +3,7 @@
 
 module KS.Server.Config
    ( Config (..)
+   , MongoConf (..)
    , loadConfig
    )
    where
