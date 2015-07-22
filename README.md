@@ -14,7 +14,7 @@ REST server for KitchenSnitch (Haskell)
 
 ## Building from source
 
-Make sure you have `ghc 7.8.x`, `cabal-install` and `darcs` installed.
+Make sure you have `ghc 7.10.x`, `cabal-install` and `darcs` installed.
 
 Update your cabal list
 
@@ -25,13 +25,8 @@ And install some native deps that `cabal` can't do for you
 On Ubuntu:
 
     # apt-get install --reinstall g++ 
-    # apt-get install libzip-dev
 
-On Arch Linux:
-
-    # pacman -S libzip
-
-Get the `ks-download` source code
+Get the `ks-server` source code
 
     $ darcs get http://hub.darcs.net/dino/ks-server
 
@@ -42,7 +37,7 @@ Update your cabal library and tools, we need a modern version
 Set up a sandbox for building (if you wish to use a sandbox)
 
     $ mkdir ~/.cabal/sandbox
-    $ cabal sandbox init --sandbox=$HOME/.cabal/sandbox/kitchensnitch
+    $ cabal sandbox init --sandbox=/home/YOU/.cabal/sandbox/kitchensnitch
 
 Then install the dependencies
 
