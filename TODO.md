@@ -1,3 +1,11 @@
-- Get resource-pool library involved for db connection pooling
+- short-term goal: Get a single query working
+   - Simple Scotty server
+   - Hook up to mongo
+   - Retrieve the proper data
+   - How does logging work? My own or can Scotty do some of this?
+- next goal:
+   - API key checking
+   - Get resource-pool library involved for db connection pooling
+
 - Get some sort of authentication involved. Something we can use API keys with? Can wai-extra do this with its HTTP Basic?
 - Need to use SSL to protect the API keys, this is a server-side thing with Apache or Nginx
