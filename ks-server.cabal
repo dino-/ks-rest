@@ -23,6 +23,7 @@ executable ks-server
                      , filepath
                      , hslogger
                      , ks-library >= 1.2
+                     , scotty
                      , tce-conf
                      , text
    hs-source-dirs:   src
