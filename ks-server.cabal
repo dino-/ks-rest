@@ -20,12 +20,15 @@ executable ks-server
    other-modules:    KS.Server.Config
                      KS.Server.Log
    build-depends:      base >=4.8 && <4.9
+                     , aeson-bson
                      , filepath
                      , hslogger
                      , ks-library >= 1.2
+                     , mongoDB
                      , scotty
                      , tce-conf
                      , text
+                     , transformers
    hs-source-dirs:   src
    ghc-options:      -Wall
    default-language: Haskell2010
