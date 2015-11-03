@@ -60,7 +60,12 @@ handler mc pipe = do
 
    ds <- access pipe slaveOk (database mc) $ aggregate "inspections" pipeline
 
-   json . map toAeson $ ds
+   -- This one will includ the (odd) _id and the dist from the group
+   -- We'll need this later
+   --json . map toAeson $ ds
+
+   -- This one will return only the traditional inspection record
+   json . map toAeson . map (at "last_inspection") $ ds
 
 
 {- Parse point data from query strings
