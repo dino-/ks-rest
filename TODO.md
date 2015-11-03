@@ -11,3 +11,4 @@
 - Need to use SSL to protect the API keys, this is a server-side thing with Apache or Nginx
    - Figure out virtual server with one of those
 - LOOK INTO API VERSIONING FOR THE REST CALLS!!
+- Our dates in the KS library data type don't convert to the same JSON as aeson-bson makes. Is this a problem? Probably, but what to do?

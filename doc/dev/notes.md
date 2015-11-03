@@ -39,3 +39,11 @@ All inspections for a given place_id. Sorted reverse by date (most recent first)
       /inspections/latest?limit=50
 
 limit optional, default 50
+
+
+## general junk
+
+In URL encoded strings:
+
+- %20 = space
+- %2C = comma
