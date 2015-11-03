@@ -4,8 +4,10 @@
    - Retrieve the proper data
    - How does logging work? My own or can Scotty do some of this?
 - next goal:
+   - Document installing `aeson-bson` from dino- github in the wiki
    - API key checking
+      - Store API key hashes in conf
    - Get resource-pool library involved for db connection pooling
-
-- Get some sort of authentication involved. Something we can use API keys with? Can wai-extra do this with its HTTP Basic?
 - Need to use SSL to protect the API keys, this is a server-side thing with Apache or Nginx
+   - Figure out virtual server with one of those
+- LOOK INTO API VERSIONING FOR THE REST CALLS!!
