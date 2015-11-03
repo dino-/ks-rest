@@ -18,6 +18,7 @@ extra-source-files:  doc/dev/notes.md
 executable ks-server
    main-is:          ks-server.hs
    other-modules:    KS.Server.Config
+                     KS.Server.Handler.ByLocMostRec
                      KS.Server.Log
    build-depends:      base >=4.8 && <4.9
                      , aeson-bson
