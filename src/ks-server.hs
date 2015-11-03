@@ -3,15 +3,13 @@
 
 {-# LANGUAGE OverloadedStrings #-}
 
---import Control.Monad.IO.Class ( liftIO )
-import qualified Data.Text as T
 import Database.MongoDB hiding ( options )
-import KS.Data.BSON ( bsonToDoc )
 import System.Environment ( getArgs )
-import Web.Scotty ( ActionM, get, json, param, scotty, text )
+import Web.Scotty ( get, scotty, text )
 
 import KS.Server.Config
 import qualified KS.Server.Handler.ByLocMostRec as ByLocMostRec
+import qualified KS.Server.Handler.SearchName as SearchName
 import KS.Server.Log
 
 
@@ -36,8 +34,8 @@ main = do
    -- Start the server
    scotty 3000 $ do
       -- These are the method/route/handler definitions
-      get "/hello" $ text "Hello world!"
-      get "/inspections/search-name" $ searchName mc pipe
+      get "/ping" $ text "pong\n"
+      get "/inspections/search_name" $ SearchName.handler mc pipe
       get "/inspections/by_loc" $ ByLocMostRec.handler mc pipe
 
    {- These never execute, is that bad? Can do something threaded if necessary
@@ -45,13 +43,3 @@ main = do
    putStrLn "Server shutting down..."
    close pipe
    -}
-
-
--- Request handlers
-
-searchName :: MongoConf -> Pipe -> ActionM ()
-searchName mc pipe = do
-   regex' <- param "regex"
-   ds <- access pipe slaveOk (database mc) $ do
-      rest =<< find (select ["place.name" =: Regex (regex' :: T.Text) "i"] "inspections")
-   json . map bsonToDoc $ ds
