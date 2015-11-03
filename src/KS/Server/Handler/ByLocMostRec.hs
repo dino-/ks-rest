@@ -7,7 +7,6 @@ module KS.Server.Handler.ByLocMostRec ( handler )
    where
 
 import Control.Arrow ( (&&&) )
---import Control.Monad.IO.Class ( liftIO )
 import Data.Aeson.Bson ( toAeson )
 import qualified Data.Text as T
 import Database.MongoDB hiding ( options )

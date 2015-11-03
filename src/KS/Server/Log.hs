@@ -6,9 +6,13 @@ module KS.Server.Log
 
    -- Re-exported from System.Log
    , debugM, infoM, noticeM, warningM, errorM , criticalM, alertM, emergencyM
+
+   -- Re-exported from Control.Monad.IO.Class
+   , liftIO
    )
    where
 
+import Control.Monad.IO.Class ( liftIO )
 import System.Log.Formatter ( simpleLogFormatter )
 import System.Log.Handler ( setFormatter )
 import System.Log.Handler.Simple ( fileHandler )
