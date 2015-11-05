@@ -32,7 +32,7 @@ main = do
       \tf -> noticeM lname $ "Authenticated with Mongo: " ++ (show tf)
 
    -- Start the server
-   scotty 3000 $ do
+   scotty (webServerPort config) $ do
       -- These are the method/route/handler definitions
       get "/ping" $ text "pong\n"
       get "/inspections/search_name" $ SearchName.handler mc pipe
