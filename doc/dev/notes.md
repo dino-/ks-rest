@@ -10,11 +10,25 @@ Good to know: Google Maps and nearly everything else in the world has coordinate
 ## API key work
 
       data APIKey
-         APIKeyActive String String
-         APIKeyRevoked String String
+         = Read { key :: String, desc :: String }
+         | ReadWrite { key :: String, desc :: String }
+         | Revoked { key :: String, desc :: String }
 
 
 ## Queries we need now
+
+Note that the API version is not necessarily the same as the server version.
+
+
+### general query shape
+
+We want to get away from having users specify a port number on the outside. I'd like to have the urls look like:
+
+      http://ks.honuapps.com/v1.0/inspections... -> http://localhost:8001/inspections...
+      http://ks.honuapps.com/v1.2/inspections... -> http://localhost:8003/inspections...
+
+This can be done with URL rewriting in Nginx, read more about this
+
 
 ### the geospatial query
 
