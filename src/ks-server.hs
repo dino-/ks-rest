@@ -8,8 +8,8 @@ import System.Environment ( getArgs )
 import Web.Scotty ( get, scotty, text )
 
 import KS.Server.Config
-import qualified KS.Server.Handler.ByLocMostRec as ByLocMostRec
-import qualified KS.Server.Handler.SearchName as SearchName
+import qualified KS.Server.Handler.Location as Location
+import qualified KS.Server.Handler.Name as Name
 import KS.Server.Log
 
 
@@ -34,12 +34,12 @@ main = do
    -- Start the server
    scotty (webServerPort config) $ do
       -- Method/route/handler definitions
-      --post "/inspections"                          $ CreateInspection.handler mc pipe
-      get  "/inspections/by_loc"                   $ ByLocMostRec.handler mc pipe
-      --get  "/inspections/by_source/:source/:end"   $ BySource.handler mc pipe
-      --get  "/inspections/latest"                   $ Latest.handler mc pipe
-      get  "/inspections/search_name"              $ SearchName.handler mc pipe
-      get  "/ping"                                 $ text "pong\n"
+      --post "/inspections"                    $ Create.handler mc pipe
+      get  "/inspections/by_loc"             $ Location.handler mc pipe
+      get  "/inspections/by_name"            $ Name.handler mc pipe
+      --get  "/inspections/by_source/:end"     $ Source.handler mc pipe
+      --get  "/inspections/latest"             $ Latest.handler mc pipe
+      get  "/ping"                           $ text "pong\n"
 
    {- These never execute, is that bad? Can do something threaded if necessary
 

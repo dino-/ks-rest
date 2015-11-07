@@ -3,7 +3,7 @@
 
 {-# LANGUAGE OverloadedStrings #-}
 
-module KS.Server.Handler.ByLocMostRec ( handler )
+module KS.Server.Handler.Location ( handler )
    where
 
 import Control.Arrow ( (&&&) )

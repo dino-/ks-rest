@@ -3,7 +3,7 @@
 
 {-# LANGUAGE OverloadedStrings #-}
 
-module KS.Server.Handler.SearchName ( handler )
+module KS.Server.Handler.Name ( handler )
    where
 
 import qualified Data.Text as T
