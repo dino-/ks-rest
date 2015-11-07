@@ -37,8 +37,8 @@ This can be done with URL rewriting in Nginx, read more about this
 
 In all of the inspections for a given inspection_source, the N (25?) highest and N lowest. This is two separate queries.
 
-      /inspections/by_source/nc_wake/high?n=25
-      /inspections/by_source/nc_durham/low
+      /inspections/by_source/high?sources=nc_wake?limit=25
+      /inspections/by_source/low?sources=nc_durham,nc_orange,nc_chatham
 
 n default to 25
 
@@ -50,7 +50,7 @@ All inspections for a given place_id. Sorted reverse by date (most recent first)
 
 ### by date
 
-      /inspections/latest?limit=50
+      /inspections/by_source/latest?sources=nc_durham,nc_orange,nc_chatham&limit=50
 
 limit optional, default 50
 
