@@ -33,10 +33,13 @@ main = do
 
    -- Start the server
    scotty (webServerPort config) $ do
-      -- These are the method/route/handler definitions
-      get "/ping" $ text "pong\n"
-      get "/inspections/search_name" $ SearchName.handler mc pipe
-      get "/inspections/by_loc" $ ByLocMostRec.handler mc pipe
+      -- Method/route/handler definitions
+      --post "/inspections"                          $ CreateInspection.handler mc pipe
+      get  "/inspections/by_loc"                   $ ByLocMostRec.handler mc pipe
+      --get  "/inspections/by_source/:source/:end"   $ BySource.handler mc pipe
+      --get  "/inspections/latest"                   $ Latest.handler mc pipe
+      get  "/inspections/search_name"              $ SearchName.handler mc pipe
+      get  "/ping"                                 $ text "pong\n"
 
    {- These never execute, is that bad? Can do something threaded if necessary
 
