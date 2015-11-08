@@ -61,3 +61,22 @@ In URL encoded strings:
 
 - %20 = space
 - %2C = comma
+
+
+## Recent db adjustment, added recent_inspections collection (2015-11-08)
+
+Did this in the mongo shell
+
+Get the most recent inspection for every place id
+
+      var c = db.inspections.aggregate([{$sort:{"place.place_id":1,"inspection.date":-1}},{$group:{_id:"$place.place_id",last_inspection:{$first:{_id:"$_id",doctype:"$doctype",inspection:"$inspection",place:"$place"}}}}])
+
+Insert that set into the recent_inspections collection
+
+      c.forEach( function(d) { db.recent_inspections.insert( d.last_inspection ); } )
+
+
+These numbers should match:
+
+      DB.RECENT_inspections.count()
+      db.recent_inspections.distinct("place.place_id").length
