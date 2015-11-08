@@ -28,7 +28,6 @@ data MongoConf = MongoConf
    , username :: T.Text
    , password :: T.Text
    , database :: T.Text
-   , collection :: T.Text
    }
    deriving (Read, Show)
 
