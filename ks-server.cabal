@@ -16,24 +16,25 @@ extra-source-files:  doc/dev/notes.md
                      TODO.md
 
 executable ks-server
-   main-is:          ks-server.hs
-   other-modules:    KS.Server.Config
-                     KS.Server.Handler.Location
-                     KS.Server.Handler.Name
-                     KS.Server.Log
-   build-depends:      base >=4.8 && <4.9
-                     , aeson-bson
-                     , filepath
-                     , hslogger
-                     , ks-library >= 1.2
-                     , mongoDB
-                     , scotty
-                     , tce-conf
-                     , text
-                     , transformers
-   hs-source-dirs:   src
-   ghc-options:      -Wall
-   default-language: Haskell2010
+   main-is:             ks-server.hs
+   other-modules:       KS.Server.Config
+                        KS.Server.Handler.Location
+                        KS.Server.Handler.Name
+                        KS.Server.Log
+   build-depends:         base >=4.8 && <4.9
+                        , aeson-bson
+                        , filepath
+                        , hslogger
+                        , ks-library >= 1.2
+                        , mongoDB
+                        , scotty
+                        , tce-conf
+                        , text
+                        , transformers
+   hs-source-dirs:      src
+   ghc-options:         -Wall
+   default-language:    Haskell2010
+   default-extensions:  OverloadedStrings
 
 executable ks-api-keygen
    main-is:          ks-api-keygen.hs

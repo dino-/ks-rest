@@ -1,4 +1,3 @@
-- Put OverloadedStrings into cabal file extensions clause
 - Remove collections from Config data type. It makes no sense.
 - short-term goal: Get a single query working
    - Simple Scotty server

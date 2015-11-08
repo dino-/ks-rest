@@ -1,8 +1,6 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-{-# LANGUAGE OverloadedStrings #-}
-
 module KS.Server.Handler.Location ( handler )
    where
 

@@ -1,8 +1,6 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-{-# LANGUAGE OverloadedStrings #-}
-
 import Database.MongoDB hiding ( options )
 import System.Environment ( getArgs )
 import Web.Scotty ( get, scotty, text )
