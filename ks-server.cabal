@@ -25,6 +25,7 @@ executable ks-server
                         , aeson-bson
                         , filepath
                         , hslogger
+                        , http-types
                         , ks-library >= 1.2
                         , mongoDB
                         , scotty

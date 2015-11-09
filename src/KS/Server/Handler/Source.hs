@@ -6,33 +6,50 @@ module KS.Server.Handler.Source ( handler )
 
 import Data.Aeson.Bson ( toAeson )
 import qualified Data.Text as T
+import Data.Text.Lazy ( fromStrict )
 import Database.MongoDB hiding ( options )
+import Network.HTTP.Types.Status ( badRequest400 )
 import Text.Printf ( printf )
-import Web.Scotty ( ActionM, json, param, rescue )
+import Web.Scotty ( ActionM, json, param, rescue, status, text )
 
 import KS.Server.Config
 import KS.Server.Log
+
+
+defaultLimit :: Limit
+defaultLimit = 100
 
 
 handler :: MongoConf -> Pipe -> ActionM ()
 handler mc pipe = do
    criteria <- param "criteria"
    sources <- (T.split (== ',')) <$> param "sources"
-   limit' <- param "limit" `rescue` (return . const 25)
+   limit' <- param "limit" `rescue` (return . const defaultLimit)
 
    liftIO $ infoM lname
       $ printf "by_source received, criteria: %s, sources: %s, limit: %d"
-      (T.unpack criteria) (show sources) limit'
+      (T.unpack criteria) (show sources) (limit' :: Limit)
 
-   let (sort', coll') = case (criteria :: T.Text) of
-         "high"   -> ([ "inspection.score" =: (-1 :: Int) ], "recent_inspections")
-         "low"    -> ([ "inspection.score" =: ( 1 :: Int) ], "recent_inspections")
-         "latest" -> ([ "inspection.date"  =: (-1 :: Int) ], "inspections")
-         _        -> undefined
+   let critEval = case (criteria :: T.Text) of
+         "high"   -> Right ([ "inspection.score" =: (-1 :: Int) ], "recent_inspections")
+         "low"    -> Right ([ "inspection.score" =: ( 1 :: Int) ], "recent_inspections")
+         "latest" -> Right ([ "inspection.date"  =: (-1 :: Int) ], "inspections")
+         _        -> Left  criteria
 
+   either badCriteriaFail (queryAndRespond pipe mc sources limit') critEval
+
+
+queryAndRespond :: (Val v) => Pipe -> MongoConf -> v -> Limit -> (Order, Collection) -> ActionM ()
+queryAndRespond pipe mc sources limit' (sort', coll') = do
    ds <- access pipe slaveOk (database mc) $ do
       rest =<< find ( select
          [ "inspection.inspection_source" =: [ "$in" =: sources ] ] coll'
          ) { sort = sort' , limit = limit' }
 
    json . map toAeson $ ds
+
+
+badCriteriaFail :: T.Text -> ActionM ()
+badCriteriaFail criteria = do
+   status badRequest400
+   text . fromStrict . T.concat $ ["Invalid criteria: ", criteria, "\n"]
