@@ -24,7 +24,7 @@ handler mc pipe = do
    pt <- parseLngLat <$> param "pt"
    dist <- param "dist" `rescue` (return . const defaultDistance)
 
-   liftIO $ infoM lname $ printf "by_loc query pt: %s, dist: %f"
+   liftIO $ infoM lname $ printf "by_loc received, pt: %s, dist: %f"
       (show pt) dist
 
    ds <- access pipe slaveOk (database mc) $ runCommand (
