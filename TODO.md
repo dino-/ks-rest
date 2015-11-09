@@ -1,3 +1,4 @@
+- Get data-files involved for making sure conf gets included in the distribution
 - short-term goal: Get a single query working
    - Simple Scotty server
    - Hook up to mongo
@@ -13,3 +14,4 @@
 - LOOK INTO API VERSIONING FOR THE REST CALLS!!
 - Our dates in the KS library data type don't convert to the same JSON as aeson-bson makes. Is this a problem? Probably, but what to do?
 - Need better error handling EVERYWHERE. Also code re-use with the Mongo business.
+   - Get KS.Database.Mongo.parseLastError involved here, use ks-download for examples
