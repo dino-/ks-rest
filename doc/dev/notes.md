@@ -78,5 +78,5 @@ Insert that set into the recent_inspections collection
 
 These numbers should match:
 
-      DB.RECENT_inspections.count()
+      db.recent_inspections.count()
       db.recent_inspections.distinct("place.place_id").length
