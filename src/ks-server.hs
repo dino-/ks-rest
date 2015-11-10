@@ -8,6 +8,7 @@ import Web.Scotty ( get, scotty, text )
 import KS.Server.Config
 import qualified KS.Server.Handler.Location as Location
 import qualified KS.Server.Handler.Name as Name
+import qualified KS.Server.Handler.PlaceId as PlaceId
 import qualified KS.Server.Handler.Source as Source
 import KS.Server.Log
 
@@ -36,6 +37,7 @@ main = do
       --post "/inspections"                       $ Create.handler mc pipe
       get  "/inspections/by_loc"                $ Location.handler mc pipe
       get  "/inspections/by_name"               $ Name.handler mc pipe
+      get  "/inspections/by_placeid/:placeid"   $ PlaceId.handler mc pipe
       get  "/inspections/by_source/:criteria"   $ Source.handler mc pipe
       get  "/ping"                              $ text "pong\n"
 
