@@ -1,9 +1,9 @@
+- Make a monad transformer stack to get ReaderT involved.
 - Get data-files involved for making sure conf gets included in the distribution
 - short-term goal: Get a single query working
    - Simple Scotty server
    - Hook up to mongo
    - Retrieve the proper data
-   - How does logging work? My own or can Scotty do some of this?
 - next goal:
    - Document installing `aeson-bson` from dino- github in the wiki
    - API key checking
