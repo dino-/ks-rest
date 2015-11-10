@@ -51,5 +51,8 @@ queryAndRespond pipe mc sources limit' (sort', coll') = do
 
 badCriteriaFail :: T.Text -> ActionM ()
 badCriteriaFail criteria = do
+   let errMsg = "Invalid criteria: " ++ (T.unpack criteria)
+   liftIO $ warningM lname errMsg
+
    status badRequest400
-   text . fromStrict . T.concat $ ["Invalid criteria: ", criteria, "\n"]
+   text . fromStrict . T.concat $ [T.pack errMsg, "\n"]
