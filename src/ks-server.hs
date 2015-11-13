@@ -1,7 +1,9 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
+import Data.Version ( showVersion )
 import Database.MongoDB hiding ( options )
+import Paths_ks_server ( version )
 import System.Environment ( getArgs )
 import Web.Scotty ( get, scotty, text )
 
@@ -21,7 +23,7 @@ main = do
 
    initLogging (logPriority config) (logPath config)
 
-   noticeM lname "ks-server started"
+   noticeM lname $ "ks-server version " ++ (showVersion version) ++ " started"
 
    let mc = mongoConf config
 
