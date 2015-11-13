@@ -29,11 +29,12 @@ handler mc pipe = do
    dist <- param "dist" `rescue` (return . const defaultDistance)
    minScore <- param "min_score" `rescue` (return . const defaultMinScore)
 
-   liftIO $ infoM lname $ printf "by_loc received, pt: %s, dist: %f"
-      (show pt) dist
+   liftIO $ infoM lname
+      $ printf "by_loc received, pt: %s, dist: %f, minScore: %f"
+      (show pt) dist minScore
 
-   ds <- access pipe slaveOk (database mc) $ runCommand (
-      [ "geoNear" =: ("inspections" :: T.Text)
+   r <- access pipe slaveOk (database mc) $ runCommand (
+      [ "geoNear" =: ("recent_inspections" :: T.Text)
       , "near" =:
          [ "type" =: ("Point" :: T.Text)
          , "coordinates" =: pt
@@ -44,14 +45,19 @@ handler mc pipe = do
       , "query" =: [ "inspection.score" =: [ "$gte" =: minScore ] ]
       ])
 
-   -- This one returns everything we get from mongo
-   --json . toAeson $ ds
+   -- Stripping off the stats portion
+   let documents = ("results" `at` r) :: [Document]
 
-   -- Just the inspections
-   --json . map toAeson . map (at "obj") . (at "results") $ ds
+   liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length documents
+
+   -- This one returns everything we get from mongo
+   --json . toAeson $ r
+
+   -- Just the inspections, no dist
+   --json . map toAeson . map (at "obj") $ documents
 
    -- The inspections and their distances
-   json . map toAeson . (at "results") $ ds
+   json . map toAeson $ documents
 
 
 parseLngLat :: T.Text -> [Double]
