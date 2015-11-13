@@ -51,13 +51,28 @@ handler mc pipe = do
    liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length documents
 
    -- This one returns everything we get from mongo
+   --    { results: [], state: {}, ok: 1 }
    --json . toAeson $ r
 
-   -- Just the inspections, no dist
+   -- Just the inspections, no dist ("traditional" format)
+   --    [ { _id: .., inspection: .. ... }, ... ]
    --json . map toAeson . map (at "obj") $ documents
 
-   -- The inspections and their distances
+   -- The inspections and their distances, side-by-side
+   --    [ { obj: { _id: ... }, dis: 799.72633 }, ... ]
    json . map toAeson $ documents
+
+   -- The inspections with dis inserted into the inspection
+{-
+   json . map toAeson . map combineObjAndDis $ documents
+
+
+combineObjAndDis :: Document -> Document
+combineObjAndDis doc = merge distance inspection
+   where
+      distance = ["dis" =: (("dis" `at` doc) :: Double)]
+      inspection = "obj" `at` doc
+-}
 
 
 parseLngLat :: T.Text -> [Double]
