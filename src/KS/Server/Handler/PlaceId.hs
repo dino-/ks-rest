@@ -4,9 +4,9 @@
 module KS.Server.Handler.PlaceId ( handler )
    where
 
+import Data.Aeson.Bson ( toAeson )
 import qualified Data.Text as T
 import Database.MongoDB hiding ( options )
-import KS.Data.BSON ( bsonToDoc )
 import Web.Scotty ( ActionM, json, param )
 
 import KS.Server.Config
@@ -22,4 +22,4 @@ handler mc pipe = do
    ds <- access pipe slaveOk (database mc) $ rest =<<
       find (select ["place.place_id" =: placeId] "inspections")
          { sort = [ "inspection.date" =: (-1 :: Int) ] }
-   json . map bsonToDoc $ ds
+   json . map toAeson $ ds
