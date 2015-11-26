@@ -24,6 +24,6 @@ handler mc pipe = do
       find (select ["place.place_id" =: placeId] "inspections")
          { sort = [ "inspection.date" =: (-1 :: Int) ] }
 
-   liftIO $ infoM lname $ printf "Retrieved %d inspections, sending them back now" $ length ds
+   liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length ds
 
    json . map toAeson $ ds
