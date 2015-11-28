@@ -13,9 +13,10 @@ module KS.Server.Log
    where
 
 import Control.Monad.IO.Class ( liftIO )
+import System.IO ( stdout )
 import System.Log.Formatter ( simpleLogFormatter )
 import System.Log.Handler ( setFormatter )
-import System.Log.Handler.Simple ( fileHandler )
+import System.Log.Handler.Simple ( fileHandler, streamHandler )
 import System.Log.Logger
 
 
@@ -31,6 +32,13 @@ initLogging priority logFilePath = do
    updateGlobalLogger lname $ setLevel priority
 
    -- A file handler with timestamping
+   {-
    (flip setFormatter $ simpleLogFormatter "[$time : $prio] $msg")
       <$> fileHandler logFilePath DEBUG
+      >>= updateGlobalLogger lname . addHandler
+   -}
+
+   -- A stdout handler with timestamping
+   (flip setFormatter $ simpleLogFormatter "[$time : $prio] $msg")
+      <$> streamHandler stdout DEBUG
       >>= updateGlobalLogger lname . addHandler

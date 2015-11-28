@@ -34,6 +34,7 @@ executable ks-server
                         , tce-conf
                         , text
                         , transformers
+                        , wai-extra
    hs-source-dirs:      src
    ghc-options:         -Wall
    default-language:    Haskell2010
