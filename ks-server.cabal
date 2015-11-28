@@ -29,7 +29,7 @@ executable ks-server
                         , hslogger
                         , http-types
                         , ks-library >= 1.2
-                        , mongoDB
+                        , mongoDB <= 2.0.8
                         , scotty
                         , tce-conf
                         , text
