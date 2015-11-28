@@ -3,8 +3,6 @@
 
 import Data.Version ( showVersion )
 import Database.MongoDB hiding ( options )
-import Network.Wai.Middleware.Gzip ( def )
-import Network.Wai.Middleware.RequestLogger ( OutputFormat (..), IPAddrSource (..), mkRequestLogger, outputFormat )
 import Paths_ks_server ( version )
 import System.Environment ( getArgs )
 import Web.Scotty ( get, middleware, scotty, text )
@@ -23,7 +21,7 @@ main = do
 
    config <- loadConfig confDir
 
-   initLogging (logPriority config) (logPath config)
+   logger <- initLogging (logPriority config) (logPath config)
 
    noticeM lname $ "ks-server version " ++ (showVersion version) ++ " started"
 
@@ -35,13 +33,10 @@ main = do
       $ auth (username mc) (password mc)) >>=
       \tf -> noticeM lname $ "Authenticated with Mongo: " ++ (show tf)
 
-   reqLogger <- liftIO $ mkRequestLogger def { outputFormat = Apache FromFallback }
-   --let reqLogger = logStdoutDev
 
    -- Start the server
    scotty (webServerPort config) $ do
-      --log requests to console
-      middleware reqLogger
+      middleware logger
 
       -- Method/route/handler definitions
       --post "/inspections"                       $ Create.handler mc pipe
@@ -56,22 +51,3 @@ main = do
    putStrLn "Server shutting down..."
    close pipe
    -}
-
-
-{-
-import Web.Scotty
-import Network.Wai.Middleware.RequestLogger
-
-import Control.Monad.IO.Class
-import Data.Monoid (mconcat)
-import Data.Default
-
-main = scotty 3000 $ do
-    --log requests to console
-    logger <- liftIO $ mkRequestLogger def { outputFormat = Apache FromHeader }
-    middleware logger
-
-    get "/:word" $ do
-        beam <- param "word"
-        html $ mconcat ["<h1>Scotty, ", beam, " me up!</h1>"]
--}

@@ -25,6 +25,7 @@ executable ks-server
                         KS.Server.Log
    build-depends:         base >=4.8 && <4.9
                         , aeson-bson
+                        , fast-logger
                         , filepath
                         , hslogger
                         , http-types
@@ -34,6 +35,7 @@ executable ks-server
                         , tce-conf
                         , text
                         , transformers
+                        , wai
                         , wai-extra
    hs-source-dirs:      src
    ghc-options:         -Wall
