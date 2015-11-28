@@ -53,7 +53,9 @@ ks-download:
     $ cabal build
     $ cabal test
 
-And you should be good for development from here.
+And you should be good for development from here. Run it:
+
+    $ cabal run ks-server -- PATH/TO/DIR/CONTAINING/CONF
 
 
 ### Building for deployment
@@ -61,12 +63,15 @@ And you should be good for development from here.
 This will build everything into a deployable directory structure
 that you can put somewhere like `/opt/` for instance.
 
-    $ cabal configure --prefix=/tmp/ks-server-VER
-    $ cabal build
-    $ cabal copy
+    $ cabal install --prefix=/tmp/ks-server-VER
     $ pushd /tmp
     $ tar czvf ks-download-VER.tgz ks-server-VER
     $ popd
+
+
+Running the server. Once you get it installed, run like this:
+
+    $ ks-server PATH/TO/DIR/CONTAINING/CONF
 
 
 ## Contact
