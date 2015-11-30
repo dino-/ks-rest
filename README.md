@@ -8,6 +8,10 @@ REST server for KitchenSnitch (Haskell)
 
 ## Description
 
+REST server for the KitchenSnitch project. This server is for
+accessing the back-end KS database data which is currently stored
+in a MongoDB instance.
+
 
 ## Installing
 
@@ -63,7 +67,7 @@ And you should be good for development from here. Run it:
 This will build everything into a deployable directory structure
 that you can put somewhere like `/opt/` for instance.
 
-    $ cabal install --prefix=/tmp/ks-server-VER
+    $ cabal install --prefix=/tmp/ks-server-VER --datasubdir=.
     $ pushd /tmp
     $ tar czvf ks-download-VER.tgz ks-server-VER
     $ popd

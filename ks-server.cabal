@@ -1,7 +1,7 @@
 name:                ks-server
 version:             1.4
 synopsis:            REST server for KitchenSnitch
--- description:         
+description:         REST server for the KitchenSnitch project. This server is for accessing the back-end KS database data which is currently stored in a MongoDB instance.
 license:             ISC
 license-file:        LICENSE
 author:              Dino Morelli
@@ -11,9 +11,11 @@ category:            Network
 build-type:          Simple
 cabal-version:       >=1.10
 
-extra-source-files:  doc/dev/notes.md
+data-files:          resources/bin/stress.sh
+                     resources/ks-server.conf
+
+extra-source-files:  changelog.md
                      README.md
-                     TODO.md
 
 executable ks-server
    main-is:             ks-server.hs
@@ -22,6 +24,7 @@ executable ks-server
                         KS.Server.Handler.Name
                         KS.Server.Handler.PlaceId
                         KS.Server.Handler.Source
+                        KS.Server.Handler.Version
                         KS.Server.Log
    build-depends:         base >=4.8 && <4.9
                         , aeson-bson
