@@ -22,6 +22,8 @@ defaultLimit = 100
 
 handler :: MongoConf -> Pipe -> ActionM ()
 handler mc pipe = do
+   liftIO $ lineM
+
    criteria <- param "criteria"
    sources <- (T.split (== ',')) <$> param "sources"
    limit' <- param "limit" `rescue` (return . const defaultLimit)

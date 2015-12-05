@@ -16,6 +16,8 @@ import KS.Server.Log
 
 handler :: MongoConf -> Pipe -> ActionM ()
 handler mc pipe = do
+   liftIO $ lineM
+
    placeId <- param "placeid"
 
    liftIO $ infoM lname $ "by_placeid received, placeid: " ++ (T.unpack placeId)

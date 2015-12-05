@@ -3,6 +3,7 @@
 
 module KS.Server.Log
    ( initLogging, lname
+   , lineM
 
    -- Re-exported from System.Log
    , debugM, infoM, noticeM, warningM, errorM , criticalM, alertM, emergencyM
@@ -61,3 +62,7 @@ waiHandler logDest prio = return $ GenericHandler
 
    where
       writeFuncImpl logDest' msg = pushLogStr logDest' . toLogStr $ msg
+
+
+lineM :: IO ()
+lineM = noticeM lname $ replicate 60 '-'

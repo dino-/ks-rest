@@ -25,6 +25,8 @@ defaultMinScore = 0.0
 
 handler :: MongoConf -> Pipe -> ActionM ()
 handler mc pipe = do
+   liftIO $ lineM
+
    pt <- parseLngLat <$> param "pt"
    dist <- param "dist" `rescue` (return . const defaultDistance)
    minScore <- param "min_score" `rescue` (return . const defaultMinScore)

@@ -24,6 +24,7 @@ main = do
 
    logger <- initLogging (logPriority config) (logPath config)
 
+   lineM
    noticeM lname $ "ks-server version " ++ (showVersion version) ++ " started"
 
    let mc = mongoConf config

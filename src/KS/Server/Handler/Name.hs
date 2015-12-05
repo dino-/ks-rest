@@ -15,6 +15,8 @@ import KS.Server.Log
 
 handler :: MongoConf -> Pipe -> ActionM ()
 handler mc pipe = do
+   liftIO $ lineM
+
    regex' <- param "regex"
 
    liftIO $ infoM lname $ "by_name received, regex: " ++ (T.unpack regex')
