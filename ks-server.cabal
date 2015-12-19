@@ -1,5 +1,5 @@
 name:                ks-server
-version:             1.5
+version:             1.6
 synopsis:            REST server for KitchenSnitch
 description:         REST server for the KitchenSnitch project. This server is for accessing the back-end KS database data which is currently stored in a MongoDB instance.
 license:             ISC
