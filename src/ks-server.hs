@@ -42,13 +42,13 @@ main = do
       middleware logger
 
       -- Method/route/handler definitions
-      --post "/inspections"                       $ Create.handler mc pipe
-      get  "/inspections/by_loc"                $ Location.handler mc pipe
-      get  "/inspections/by_name"               $ Name.handler mc pipe
-      get  "/inspections/by_placeid/:placeid"   $ PlaceId.handler mc pipe
-      get  "/inspections/by_source/:criteria"   $ Source.handler mc pipe
-      get  "/stats/latest/by_source"            $ Stats_Latest.handler mc pipe
-      get  "/version"                           $ Version.handler
+      --post "/v1.0/inspections"                       $ Create.handler mc pipe
+      get  "/v1.0/inspections/by_loc"                $ Location.handler mc pipe
+      get  "/v1.0/inspections/by_name"               $ Name.handler mc pipe
+      get  "/v1.0/inspections/by_placeid/:placeid"   $ PlaceId.handler mc pipe
+      get  "/v1.0/inspections/by_source/:criteria"   $ Source.handler mc pipe
+      get  "/v1.0/stats/latest/by_source"            $ Stats_Latest.handler mc pipe
+      get  "/v1.0/version"                           $ Version.handler
 
    {- These never execute, is that bad? Can do something threaded if necessary
 
