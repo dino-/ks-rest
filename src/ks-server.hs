@@ -8,12 +8,12 @@ import System.Environment ( getArgs )
 import Web.Scotty ( get, middleware, scotty )
 
 import KS.Server.Config
-import qualified KS.Server.Handler.Location as Location
-import qualified KS.Server.Handler.Name as Name
-import qualified KS.Server.Handler.PlaceId as PlaceId
-import qualified KS.Server.Handler.Source as Source
-import qualified KS.Server.Handler.Stats.Latest as Stats_Latest
-import qualified KS.Server.Handler.Version as Version
+import qualified KS.Server.Inspections.ByLoc
+import qualified KS.Server.Inspections.ByName
+import qualified KS.Server.Inspections.ByPlaceID
+import qualified KS.Server.Inspections.BySource
+import qualified KS.Server.Stats.Latest
+import qualified KS.Server.Version
 import KS.Server.Log
 
 
@@ -42,13 +42,13 @@ main = do
       middleware logger
 
       -- Method/route/handler definitions
-      --post "/v1.0/inspections"                       $ Create.handler mc pipe
-      get  "/v1.0/inspections/by_loc"                $ Location.handler mc pipe
-      get  "/v1.0/inspections/by_name"               $ Name.handler mc pipe
-      get  "/v1.0/inspections/by_placeid/:placeid"   $ PlaceId.handler mc pipe
-      get  "/v1.0/inspections/by_source/:criteria"   $ Source.handler mc pipe
-      get  "/v1.0/stats/latest/by_source"            $ Stats_Latest.handler mc pipe
-      get  "/v1.0/version"                           $ Version.handler
+      --post "/v1.0/inspections"                       $ KS.Server.Inspections.Create.handler mc pipe
+      get  "/v1.0/inspections/by_loc"                $ KS.Server.Inspections.ByLoc.handler mc pipe
+      get  "/v1.0/inspections/by_name"               $ KS.Server.Inspections.ByName.handler mc pipe
+      get  "/v1.0/inspections/by_placeid/:placeid"   $ KS.Server.Inspections.ByPlaceID.handler mc pipe
+      get  "/v1.0/inspections/by_source/:criteria"   $ KS.Server.Inspections.BySource.handler mc pipe
+      get  "/v1.0/stats/latest/by_source"            $ KS.Server.Stats.Latest.handler mc pipe
+      get  "/v1.0/version"                           $ KS.Server.Version.handler
 
    {- These never execute, is that bad? Can do something threaded if necessary
 

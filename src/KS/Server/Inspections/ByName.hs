@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Handler.Stats.Latest ( handler )
+module KS.Server.Inspections.ByName ( handler )
    where
 
 import Data.Aeson.Bson ( toAeson )
@@ -17,18 +17,10 @@ handler :: MongoConf -> Pipe -> ActionM ()
 handler mc pipe = do
    liftIO $ lineM
 
-   sources <- (T.split (== ',')) <$> param "sources"
+   regex' <- param "regex"
 
-   liftIO $ infoM lname
-      $ "stats latest by_source received, sources: "
-      ++ (show sources)
+   liftIO $ infoM lname $ "by_name received, regex: " ++ (T.unpack regex')
 
    ds <- access pipe slaveOk (database mc) $ rest =<<
-      find ( select
-         [ "doctype" =: ("regional_stats" :: T.Text)
-         , "source" =: [ "$in" =: sources ]
-         ]
-         "regional_data"
-         )
-
+      find (select ["place.name" =: Regex (regex' :: T.Text) "i"] "inspections")
    json . map toAeson $ ds

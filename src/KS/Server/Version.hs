@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Handler.Version ( handler )
+module KS.Server.Version ( handler )
    where
 
 import Data.Aeson.Bson ( toAeson )
