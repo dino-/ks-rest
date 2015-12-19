@@ -24,6 +24,7 @@ executable ks-server
                         KS.Server.Handler.Name
                         KS.Server.Handler.PlaceId
                         KS.Server.Handler.Source
+                        KS.Server.Handler.Stats.Latest
                         KS.Server.Handler.Version
                         KS.Server.Log
    build-depends:         base >=4.8 && <4.9

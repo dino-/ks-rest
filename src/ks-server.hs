@@ -12,6 +12,7 @@ import qualified KS.Server.Handler.Location as Location
 import qualified KS.Server.Handler.Name as Name
 import qualified KS.Server.Handler.PlaceId as PlaceId
 import qualified KS.Server.Handler.Source as Source
+import qualified KS.Server.Handler.Stats.Latest as Stats_Latest
 import qualified KS.Server.Handler.Version as Version
 import KS.Server.Log
 
@@ -46,6 +47,7 @@ main = do
       get  "/inspections/by_name"               $ Name.handler mc pipe
       get  "/inspections/by_placeid/:placeid"   $ PlaceId.handler mc pipe
       get  "/inspections/by_source/:criteria"   $ Source.handler mc pipe
+      get  "/stats/latest/by_source"            $ Stats_Latest.handler mc pipe
       get  "/version"                           $ Version.handler
 
    {- These never execute, is that bad? Can do something threaded if necessary
