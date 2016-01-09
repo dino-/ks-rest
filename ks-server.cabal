@@ -26,6 +26,7 @@ executable ks-server
                         KS.Server.Inspections.BySource
                         KS.Server.Log
                         KS.Server.Stats.Latest
+                        KS.Server.Types
                         KS.Server.Version
    build-depends:         base >=3 && <5
                         , aeson ==0.9.*
@@ -41,6 +42,7 @@ executable ks-server
                         , ks-library >=1.4
                         , mongoDB <=2.0.8
                         , mtl >=2.2.1 && <2.3
+                        , servant-docs
                         , servant-server >=0.4.4 && <0.5
                         , tce-conf ==1.1.*
                         , text ==1.2.1.*

@@ -1,7 +1,8 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Inspections.BySource ( handler )
+module KS.Server.Inspections.BySource
+   ( defaultLimit, handler )
    where
 
 import           Control.Monad.Trans ( liftIO )

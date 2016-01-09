@@ -1,7 +1,8 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Inspections.ByLoc ( handler )
+module KS.Server.Inspections.ByLoc
+   ( defaultDistance, defaultMinScore, handler )
    where
 
 import           Control.Monad.Trans ( liftIO )
@@ -15,6 +16,7 @@ import           Text.Printf ( printf )
 
 import           KS.Server.Config ( MongoConf (database) )
 import           KS.Server.Log ( infoM, lineM, lname )
+import           KS.Server.Types ( ByLocResults (..) )
 
 
 -- Default query distance in meters
@@ -29,7 +31,7 @@ defaultMinScore = 0.0
 handler
    :: MongoConf -> Pipe
    -> Maybe T.Text -> Maybe Double -> Maybe Double
-   -> EitherT ServantErr IO [Value]
+   -> EitherT ServantErr IO ByLocResults
 handler mc pipe mbPt mbDist mbMinScore = do
    liftIO $ lineM
 
@@ -62,7 +64,7 @@ handler mc pipe mbPt mbDist mbMinScore = do
 
    -- The inspections and their distances, side-by-side
    --    [ { obj: { _id: ... }, dis: 799.72633 }, ... ]
-   return $ map (Object . toAeson) bsonDocs
+   return $ ByLocResults $ map (Object . toAeson) bsonDocs
 
 
 parseLngLat :: T.Text -> [Double]
