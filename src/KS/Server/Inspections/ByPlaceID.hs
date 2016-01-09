@@ -4,21 +4,23 @@
 module KS.Server.Inspections.ByPlaceID ( handler )
    where
 
-import Data.Aeson.Bson ( toAeson )
+import           Control.Monad.Trans ( liftIO )
+import           Control.Monad.Trans.Either ( EitherT )
+import           Data.Bson.Generic ( fromBSON )
+import           Data.Maybe ( catMaybes )
 import qualified Data.Text as T
-import Database.MongoDB hiding ( options )
-import Text.Printf ( printf )
-import Web.Scotty ( ActionM, json, param )
+import           Database.MongoDB hiding ( options )
+import           Servant ( ServantErr )
+import           Text.Printf ( printf )
 
-import KS.Server.Config
-import KS.Server.Log
+import qualified KS.Data.Document as D
+import           KS.Server.Config ( MongoConf (database) )
+import           KS.Server.Log ( infoM, lineM, lname )
 
 
-handler :: MongoConf -> Pipe -> ActionM ()
-handler mc pipe = do
+handler :: MongoConf -> Pipe -> T.Text -> EitherT ServantErr IO [D.Document]
+handler mc pipe placeId = do
    liftIO $ lineM
-
-   placeId <- param "placeid"
 
    liftIO $ infoM lname $ "by_placeid received, placeid: " ++ (T.unpack placeId)
 
@@ -28,4 +30,4 @@ handler mc pipe = do
 
    liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length ds
 
-   json . map toAeson $ ds
+   return $ catMaybes . map fromBSON $ ds

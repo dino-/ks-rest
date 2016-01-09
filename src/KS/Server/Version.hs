@@ -4,13 +4,14 @@
 module KS.Server.Version ( handler )
    where
 
-import Data.Aeson.Bson ( toAeson )
+import Control.Monad.Trans ( liftIO )
+import Control.Monad.Trans.Either ( EitherT )
+import Data.Aeson ( Value, (.=), object )
 import Data.Version ( showVersion )
-import Database.MongoDB hiding ( options )
 import Paths_ks_server ( version )
-import Web.Scotty ( ActionM, json )
+import Servant ( ServantErr )
 
-import KS.Server.Log
+import KS.Server.Log ( lineM )
 
 
 ksServerVersion, ksAPIVersion :: String
@@ -21,11 +22,11 @@ ksServerVersion = showVersion version
 ksAPIVersion = "1.0"
 
 
-handler :: ActionM ()
+handler :: EitherT ServantErr IO Value
 handler = do
    liftIO $ lineM
 
-   json . toAeson $
-      [ "ks_server_version" =: ksServerVersion
-      , "ks_api_version" =: ksAPIVersion
+   return $ object
+      [ "ks_server_version" .= ksServerVersion
+      , "ks_api_version" .= ksAPIVersion
       ]

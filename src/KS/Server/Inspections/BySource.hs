@@ -4,29 +4,36 @@
 module KS.Server.Inspections.BySource ( handler )
    where
 
-import Data.Aeson.Bson ( toAeson )
+import           Control.Monad.Trans ( liftIO )
+import           Control.Monad.Trans.Either ( EitherT, left )
+import           Data.Bson.Generic ( fromBSON )
+import qualified Data.ByteString.Lazy.Char8 as C
+import           Data.Maybe ( catMaybes )
 import qualified Data.Text as T
-import Data.Text.Lazy ( fromStrict )
-import Database.MongoDB hiding ( options )
-import Network.HTTP.Types.Status ( badRequest400 )
-import Text.Printf ( printf )
-import Web.Scotty ( ActionM, json, param, rescue, status, text )
+import           Database.MongoDB hiding ( Value, options )
+import           Servant ( ServantErr (errBody) , err400 )
+import           Text.Printf ( printf )
 
-import KS.Server.Config
-import KS.Server.Log
+import qualified KS.Data.Document as D
+import           KS.Server.Config ( MongoConf (database) )
+import           KS.Server.Log ( infoM, lineM, lname, warningM )
 
 
 defaultLimit :: Limit
 defaultLimit = 100
 
 
-handler :: MongoConf -> Pipe -> ActionM ()
-handler mc pipe = do
+handler
+   :: MongoConf -> Pipe
+   -> T.Text -> Maybe T.Text -> Maybe Limit
+   -> EitherT ServantErr IO [D.Document]
+handler mc pipe criteria mbSources mbLimit = do
    liftIO $ lineM
 
-   criteria <- param "criteria"
-   sources <- (T.split (== ',')) <$> param "sources"
-   limit' <- param "limit" `rescue` (return . const defaultLimit)
+   sources <- maybe
+      (left $ err400 { errBody = "Missing required query param: sources" })
+      (return . T.split (== ',')) mbSources
+   let limit' = maybe defaultLimit id mbLimit
 
    liftIO $ infoM lname
       $ printf "by_source received, criteria: %s, sources: %s, limit: %d"
@@ -41,20 +48,23 @@ handler mc pipe = do
    either badCriteriaFail (queryAndRespond pipe mc sources limit') critEval
 
 
-queryAndRespond :: (Val v) => Pipe -> MongoConf -> v -> Limit -> (Order, Collection) -> ActionM ()
+queryAndRespond
+   :: (Val v)
+   => Pipe -> MongoConf
+   -> v -> Limit -> (Order, Collection)
+   -> EitherT ServantErr IO [D.Document]
 queryAndRespond pipe mc sources limit' (sort', coll') = do
    ds <- access pipe slaveOk (database mc) $ do
       rest =<< find ( select
          [ "inspection.inspection_source" =: [ "$in" =: sources ] ] coll'
          ) { sort = sort' , limit = limit' }
 
-   json . map toAeson $ ds
+   return $ catMaybes . map fromBSON $ ds
 
 
-badCriteriaFail :: T.Text -> ActionM ()
+badCriteriaFail :: T.Text -> EitherT ServantErr IO [D.Document]
 badCriteriaFail criteria = do
    let errMsg = "Invalid criteria: " ++ (T.unpack criteria)
    liftIO $ warningM lname errMsg
 
-   status badRequest400
-   text . fromStrict . T.concat $ [T.pack errMsg, "\n"]
+   left $ err400 { errBody = C.pack errMsg }

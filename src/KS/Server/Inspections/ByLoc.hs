@@ -4,14 +4,17 @@
 module KS.Server.Inspections.ByLoc ( handler )
    where
 
-import Data.Aeson.Bson ( toAeson )
+import           Control.Monad.Trans ( liftIO )
+import           Control.Monad.Trans.Either ( EitherT, left )
+import           Data.Aeson ( Value (Object) )
+import           Data.Aeson.Bson ( toAeson )
 import qualified Data.Text as T
-import Database.MongoDB hiding ( options )
-import Text.Printf ( printf )
-import Web.Scotty ( ActionM, json, param, rescue )
+import           Database.MongoDB hiding ( Value, options )
+import           Servant ( ServantErr (errBody) , err400 )
+import           Text.Printf ( printf )
 
-import KS.Server.Config
-import KS.Server.Log
+import           KS.Server.Config ( MongoConf (database) )
+import           KS.Server.Log ( infoM, lineM, lname )
 
 
 -- Default query distance in meters
@@ -23,13 +26,18 @@ defaultMinScore :: Double
 defaultMinScore = 0.0
 
 
-handler :: MongoConf -> Pipe -> ActionM ()
-handler mc pipe = do
+handler
+   :: MongoConf -> Pipe
+   -> Maybe T.Text -> Maybe Double -> Maybe Double
+   -> EitherT ServantErr IO [Value]
+handler mc pipe mbPt mbDist mbMinScore = do
    liftIO $ lineM
 
-   pt <- parseLngLat <$> param "pt"
-   dist <- param "dist" `rescue` (return . const defaultDistance)
-   minScore <- param "min_score" `rescue` (return . const defaultMinScore)
+   pt <- maybe
+      (left $ err400 { errBody = "Missing required query param: pt" })
+      (return . parseLngLat) mbPt
+   let dist = maybe defaultDistance id mbDist
+   let minScore = maybe defaultMinScore id mbMinScore
 
    liftIO $ infoM lname
       $ printf "by_loc received, pt: %s, dist: %f, minScore: %f"
@@ -48,33 +56,13 @@ handler mc pipe = do
       ])
 
    -- Stripping off the stats portion
-   let documents = ("results" `at` r) :: [Document]
+   let bsonDocs = ("results" `at` r) :: [Document]
 
-   liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length documents
-
-   -- This one returns everything we get from mongo
-   --    { results: [], state: {}, ok: 1 }
-   --json . toAeson $ r
-
-   -- Just the inspections, no dist ("traditional" format)
-   --    [ { _id: .., inspection: .. ... }, ... ]
-   --json . map toAeson . map (at "obj") $ documents
+   liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length bsonDocs
 
    -- The inspections and their distances, side-by-side
    --    [ { obj: { _id: ... }, dis: 799.72633 }, ... ]
-   json . map toAeson $ documents
-
-   -- The inspections with dis inserted into the inspection
-{-
-   json . map toAeson . map combineObjAndDis $ documents
-
-
-combineObjAndDis :: Document -> Document
-combineObjAndDis doc = merge distance inspection
-   where
-      distance = ["dis" =: (("dis" `at` doc) :: Double)]
-      inspection = "obj" `at` doc
--}
+   return $ map (Object . toAeson) bsonDocs
 
 
 parseLngLat :: T.Text -> [Double]
