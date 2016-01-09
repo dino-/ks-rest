@@ -31,7 +31,7 @@ executable ks-server
                         , aeson ==0.9.*
                         , aeson-bson >=0.3.1 && <0.4
                         , bson >=0.3.2.1 && <0.4
-                        , bson-generic >=0.0.8
+                        , bson-generic >=0.0.8.1
                         , bytestring >=0.10.6.0 && <0.11
                         , either >=4.4.1
                         , fast-logger >=2.4.1 && <2.5
