@@ -55,6 +55,7 @@ executable ks-server
         KS.Server.Log
         KS.Server.Stats.Latest
         KS.Server.Types
+        KS.Server.Util
         KS.Server.Version
     ghc-options: -Wall
 

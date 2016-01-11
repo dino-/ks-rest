@@ -18,6 +18,7 @@ import           Text.Printf ( printf )
 import qualified KS.Data.Document as D
 import           KS.Server.Config ( MongoConf (database) )
 import           KS.Server.Log ( infoM, lineM, lname, warningM )
+import           KS.Server.Util ( requiredParam )
 
 
 defaultLimit :: Limit
@@ -31,9 +32,7 @@ handler
 handler mc pipe criteria mbSources mbLimit = do
    liftIO $ lineM
 
-   sources <- maybe
-      (left $ err400 { errBody = "Missing required query param: sources" })
-      (return . T.split (== ',')) mbSources
+   sources <- (T.split (== ',')) <$> requiredParam "sources" mbSources
    let limit' = maybe defaultLimit id mbLimit
 
    liftIO $ infoM lname

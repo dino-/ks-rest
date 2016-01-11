@@ -6,17 +6,18 @@ module KS.Server.Inspections.ByLoc
    where
 
 import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Either ( EitherT, left )
+import           Control.Monad.Trans.Either ( EitherT )
 import           Data.Aeson ( Value (Object) )
 import           Data.Aeson.Bson ( toAeson )
 import qualified Data.Text as T
 import           Database.MongoDB hiding ( Value, options )
-import           Servant ( ServantErr (errBody) , err400 )
+import           Servant ( ServantErr )
 import           Text.Printf ( printf )
 
 import           KS.Server.Config ( MongoConf (database) )
 import           KS.Server.Log ( infoM, lineM, lname )
 import           KS.Server.Types ( ByLocResults (..) )
+import           KS.Server.Util ( requiredParam )
 
 
 -- Default query distance in meters
@@ -35,9 +36,7 @@ handler
 handler mc pipe mbPt mbDist mbMinScore = do
    liftIO $ lineM
 
-   pt <- maybe
-      (left $ err400 { errBody = "Missing required query param: pt" })
-      (return . parseLngLat) mbPt
+   pt <- parseLngLat <$> requiredParam "pt" mbPt
    let dist = maybe defaultDistance id mbDist
    let minScore = maybe defaultMinScore id mbMinScore
 

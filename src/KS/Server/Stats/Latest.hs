@@ -5,15 +5,16 @@ module KS.Server.Stats.Latest ( handler )
    where
 
 import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Either ( EitherT, left )
+import           Control.Monad.Trans.Either ( EitherT )
 import           Data.Aeson ( Value (Object) )
 import           Data.Aeson.Bson ( toAeson )
 import qualified Data.Text as T
 import           Database.MongoDB hiding ( Value, options )
-import           Servant ( ServantErr (errBody) , err400 )
+import           Servant ( ServantErr )
 
 import           KS.Server.Config ( MongoConf (database) )
 import           KS.Server.Log ( infoM, lineM, lname )
+import           KS.Server.Util ( requiredParam )
 
 
 handler
@@ -23,9 +24,7 @@ handler
 handler mc pipe mbSources = do
    liftIO $ lineM
 
-   sources <- maybe
-      (left $ err400 { errBody = "Missing required query param: sources" })
-      (return . T.split (== ',')) mbSources
+   sources <- (T.split (== ',')) <$> requiredParam "sources" mbSources
 
    liftIO $ infoM lname
       $ "stats latest by_source received, sources: "
