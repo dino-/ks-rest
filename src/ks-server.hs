@@ -17,9 +17,10 @@ import           Servant
 import           Servant.Docs
 import           System.Environment ( getArgs )
 import           System.Exit ( exitSuccess )
+import           Text.Printf ( printf )
 
 import           KS.Server.Config
-                  ( Config ( logPath, logPriority, mongoConf)
+                  ( Config ( logPath, logPriority, mongoConf, webServerPort )
                   , MongoConf ( database, ip, password, username )
                   , loadConfig
                   )
@@ -88,8 +89,11 @@ main = do
    -}
    logger <- initLogging (logPriority config) (logPath config)
 
+   let port = webServerPort config
+
    lineM
-   noticeM lname $ "ks-server version " ++ (showVersion version) ++ " started"
+   noticeM lname $ printf "ks-server version %s started on port %d"
+      (showVersion version) port
 
    let mc = mongoConf config
 
@@ -105,7 +109,7 @@ main = do
    -- app :: Application
    let app = logger $ serve ksAPI (server mc pipe)
 
-   run 8081 app
+   run port app
 
    {- These never execute, is that bad? Consider catching the ctrl-c..
 
