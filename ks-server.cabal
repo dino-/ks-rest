@@ -17,6 +17,7 @@ data-files:
 extra-source-files:
     changelog.md
     README.md
+    util/install.sh
 
 executable ks-server
     main-is: ks-server.hs
