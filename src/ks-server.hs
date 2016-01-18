@@ -37,24 +37,29 @@ import           KS.Server.Log ( initLogging, lineM, lname, noticeM )
 
 type KSAPI
    =     "v1.0" :> "inspections" :> "by_loc" :>
+         QueryParam "key"        String :>
          QueryParam "pt"         T.Text :>
          QueryParam "dist"       Double :>
          QueryParam "min_score"  Double :>
          Get '[JSON] ByLocResults
 
    :<|>  "v1.0" :> "inspections" :> "by_name" :>
-         QueryParam "regex" T.Text :>
+         QueryParam "key"     String :>
+         QueryParam "regex"   T.Text :>
          Get '[JSON] [D.Document]
 
    :<|>  "v1.0" :> "inspections" :> "by_placeid" :> Capture "placeid" T.Text :>
+         QueryParam "key" String :>
          Get '[JSON] [D.Document]
 
    :<|>  "v1.0" :> "inspections" :> "by_source" :> Capture "criteria" T.Text :>
+         QueryParam "key"     String :>
          QueryParam "sources" T.Text :>
          QueryParam "limit"   Limit :>
          Get '[JSON] [D.Document]
 
    :<|>  "v1.0" :> "stats" :> "latest" :> "by_source" :>
+         QueryParam "key"     String :>
          QueryParam "sources" T.Text :>
          Get '[JSON] [Value]
 
@@ -62,13 +67,13 @@ type KSAPI
          Get '[JSON] Value
 
 
-server :: MongoConf -> Pipe -> Server KSAPI
-server mc pipe
-   =     KS.Server.Inspections.ByLoc.handler mc pipe
-   :<|>  KS.Server.Inspections.ByName.handler mc pipe
-   :<|>  KS.Server.Inspections.ByPlaceID.handler mc pipe
-   :<|>  KS.Server.Inspections.BySource.handler mc pipe
-   :<|>  KS.Server.Stats.Latest.handler mc pipe
+server :: Config -> Pipe -> Server KSAPI
+server conf pipe
+   =     KS.Server.Inspections.ByLoc.handler conf pipe
+   :<|>  KS.Server.Inspections.ByName.handler conf pipe
+   :<|>  KS.Server.Inspections.ByPlaceID.handler conf pipe
+   :<|>  KS.Server.Inspections.BySource.handler conf pipe
+   :<|>  KS.Server.Stats.Latest.handler conf pipe
    :<|>  KS.Server.Version.handler
 
 
@@ -107,7 +112,7 @@ main = do
    -- which you can think of as an 'abstract' web application,
    -- not yet a webserver.
    -- app :: Application
-   let app = logger $ serve ksAPI (server mc pipe)
+   let app = logger $ serve ksAPI (server config pipe)
 
    run port app
 
@@ -152,6 +157,13 @@ instance ToParam (QueryParam "min_score" Double) where
       "min_score"                         -- name
       ["97.5"]                            -- example values
       ("The minimum inspection score cut-off, only values higher than this will be returned. Defaults to " ++ (show KS.Server.Inspections.ByLoc.defaultMinScore))
+      Normal
+
+instance ToParam (QueryParam "key" String) where
+   toParam _ = DocQueryParam
+      "key"                                        -- name
+      ["c6d4376da7119afff1de3d5af43723b8afcc3a85"] -- example values
+      "API key"
       Normal
 
 instance ToParam (QueryParam "regex" T.Text) where

@@ -13,16 +13,21 @@ import           Database.MongoDB hiding ( options )
 import           Servant ( ServantErr )
 
 import qualified KS.Data.Document as D
-import           KS.Server.Config ( MongoConf (database) )
+import           KS.Server.APIKey ( akRead )
+import           KS.Server.Config ( Config (mongoConf), MongoConf (database) )
 import           KS.Server.Log ( infoM, lineM, lname )
-import           KS.Server.Util ( requiredParam )
+import           KS.Server.Util ( requiredParam, verifyAPIKey )
 
 
-handler :: MongoConf -> Pipe -> Maybe T.Text -> EitherT ServantErr IO [D.Document]
-handler mc pipe mregex = do
+handler :: Config -> Pipe -> Maybe String -> Maybe T.Text
+   -> EitherT ServantErr IO [D.Document]
+handler conf pipe mbKey mbRegex = do
    liftIO $ lineM
 
-   regex' <- requiredParam "regex" mregex
+   let mc = mongoConf conf
+
+   _ <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
+   regex' <- requiredParam "regex" mbRegex
 
    liftIO $ infoM lname $ "by_name received, regex: " ++ (T.unpack regex')
 

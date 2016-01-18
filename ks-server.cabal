@@ -48,6 +48,7 @@ executable ks-server
     default-extensions: OverloadedStrings
     hs-source-dirs: src
     other-modules:
+        KS.Server.APIKey
         KS.Server.Config
         KS.Server.Inspections.ByLoc
         KS.Server.Inspections.ByName

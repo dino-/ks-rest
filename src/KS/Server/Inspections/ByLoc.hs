@@ -14,10 +14,11 @@ import           Database.MongoDB hiding ( Value, options )
 import           Servant ( ServantErr )
 import           Text.Printf ( printf )
 
-import           KS.Server.Config ( MongoConf (database) )
+import           KS.Server.APIKey ( akRead )
+import           KS.Server.Config ( Config (mongoConf), MongoConf (database) )
 import           KS.Server.Log ( infoM, lineM, lname )
 import           KS.Server.Types ( ByLocResults (..) )
-import           KS.Server.Util ( requiredParam )
+import           KS.Server.Util ( requiredParam, verifyAPIKey )
 
 
 -- Default query distance in meters
@@ -30,13 +31,16 @@ defaultMinScore = 0.0
 
 
 handler
-   :: MongoConf -> Pipe
-   -> Maybe T.Text -> Maybe Double -> Maybe Double
+   :: Config -> Pipe
+   -> Maybe String -> Maybe T.Text -> Maybe Double -> Maybe Double
    -> EitherT ServantErr IO ByLocResults
-handler mc pipe mbPt mbDist mbMinScore = do
+handler conf pipe mbKey mbPT mbDist mbMinScore = do
    liftIO $ lineM
 
-   pt <- parseLngLat <$> requiredParam "pt" mbPt
+   let mc = mongoConf conf
+
+   _ <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
+   pt <- parseLngLat <$> requiredParam "pt" mbPT
    let dist = maybe defaultDistance id mbDist
    let minScore = maybe defaultMinScore id mbMinScore
 

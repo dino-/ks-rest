@@ -12,18 +12,22 @@ import qualified Data.Text as T
 import           Database.MongoDB hiding ( Value, options )
 import           Servant ( ServantErr )
 
-import           KS.Server.Config ( MongoConf (database) )
+import           KS.Server.APIKey ( akRead )
+import           KS.Server.Config ( Config (mongoConf), MongoConf (database) )
 import           KS.Server.Log ( infoM, lineM, lname )
-import           KS.Server.Util ( requiredParam )
+import           KS.Server.Util ( requiredParam, verifyAPIKey )
 
 
 handler
-   :: MongoConf -> Pipe
-   -> Maybe T.Text
+   :: Config -> Pipe
+   -> Maybe String -> Maybe T.Text
    -> EitherT ServantErr IO [Value]
-handler mc pipe mbSources = do
+handler conf pipe mbKey mbSources = do
    liftIO $ lineM
 
+   let mc = mongoConf conf
+
+   _ <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
    sources <- (T.split (== ',')) <$> requiredParam "sources" mbSources
 
    liftIO $ infoM lname

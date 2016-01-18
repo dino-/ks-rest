@@ -8,7 +8,7 @@ import           Data.List ( intercalate )
 import           Prelude hiding ( words )
 import           System.Environment ( getArgs )
 
-import           KS.Server.APIKey
+import           KS.Server.APIKey ( APIKey (..) )
 
 
 main :: IO ()
@@ -16,12 +16,20 @@ main = do
    allArgs <- getArgs
 
    -- There has to be some input to hash
-   when (length allArgs < 4) $ error $
-      "ERROR: invalid input\n"
-      ++ "usage: ks-api-keygen (ro|rw) NAME DESC WORD [WORD WORD...]"
+   when (length allArgs < 4) $ error $ unlines $
+      [ "ERROR: invalid input"
+      , "usage: ks-api-keygen PERMS NAME DESC WORD [WORD WORD...]"
+      , ""
+      , "PERMS is a number representing permissions bits on or off"
+      , "   akRead    = 2"
+      , "   akWrite   = 1"
+      , "   akRevoked = 0"
+      , ""
+      , "So, read-only is 2, read-write is 3 and revoked is 0"
+      ]
 
-   let (typeStr : name : desc : words) = allArgs
-   let keyType = getKeyType typeStr
+   let (permsStr : name : desc : words) = allArgs
+   let perms = read permsStr
 
    -- Jam the words together into one, space-delimited String
    let inputStr = intercalate " " words
@@ -29,4 +37,4 @@ main = do
    -- Hash it with SHA1 and print the hex form
    let keyValue = showDigest . sha1 . BL.pack $ inputStr
 
-   print $ APIKey keyValue name desc keyType
+   print $ APIKey keyValue name desc perms

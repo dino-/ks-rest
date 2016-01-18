@@ -16,9 +16,10 @@ import           Servant ( ServantErr (errBody) , err400 )
 import           Text.Printf ( printf )
 
 import qualified KS.Data.Document as D
-import           KS.Server.Config ( MongoConf (database) )
+import           KS.Server.APIKey ( akRead )
+import           KS.Server.Config ( Config (mongoConf), MongoConf (database) )
 import           KS.Server.Log ( infoM, lineM, lname, warningM )
-import           KS.Server.Util ( requiredParam )
+import           KS.Server.Util ( requiredParam, verifyAPIKey )
 
 
 defaultLimit :: Limit
@@ -26,12 +27,15 @@ defaultLimit = 100
 
 
 handler
-   :: MongoConf -> Pipe
-   -> T.Text -> Maybe T.Text -> Maybe Limit
+   :: Config -> Pipe
+   -> T.Text -> Maybe String -> Maybe T.Text -> Maybe Limit
    -> EitherT ServantErr IO [D.Document]
-handler mc pipe criteria mbSources mbLimit = do
+handler conf pipe criteria mbKey mbSources mbLimit = do
    liftIO $ lineM
 
+   let mc = mongoConf conf
+
+   _ <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
    sources <- (T.split (== ',')) <$> requiredParam "sources" mbSources
    let limit' = maybe defaultLimit id mbLimit
 

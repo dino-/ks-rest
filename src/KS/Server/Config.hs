@@ -8,10 +8,12 @@ module KS.Server.Config
    )
    where
 
-import Data.Text as T
-import System.FilePath
-import System.Log
-import TCE.Data.ReadConf ( readConfig )
+import qualified Data.Text as T
+import           System.FilePath ( (</>) )
+import           System.Log ( Priority )
+import           TCE.Data.ReadConf ( readConfig )
+
+import           KS.Server.APIKey ( APIKeys )
 
 
 data Config = Config
@@ -19,6 +21,7 @@ data Config = Config
    , mongoConf :: MongoConf
    , logPriority :: Priority
    , logPath :: FilePath
+   , apiKeys :: APIKeys
    }
    deriving (Read, Show)
 

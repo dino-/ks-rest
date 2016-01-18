@@ -14,13 +14,20 @@ import           Servant ( ServantErr )
 import           Text.Printf ( printf )
 
 import qualified KS.Data.Document as D
-import           KS.Server.Config ( MongoConf (database) )
+import           KS.Server.APIKey ( akRead )
+import           KS.Server.Config ( Config (mongoConf), MongoConf (database) )
 import           KS.Server.Log ( infoM, lineM, lname )
+import           KS.Server.Util ( requiredParam, verifyAPIKey )
 
 
-handler :: MongoConf -> Pipe -> T.Text -> EitherT ServantErr IO [D.Document]
-handler mc pipe placeId = do
+handler :: Config -> Pipe -> T.Text -> Maybe String
+   -> EitherT ServantErr IO [D.Document]
+handler conf pipe placeId mbKey = do
    liftIO $ lineM
+
+   let mc = mongoConf conf
+
+   _ <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
 
    liftIO $ infoM lname $ "by_placeid received, placeid: " ++ (T.unpack placeId)
 
