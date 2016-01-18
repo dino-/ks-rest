@@ -35,35 +35,37 @@ import qualified KS.Server.Version
 import           KS.Server.Log ( initLogging, lineM, lname, noticeM )
 
 
+type APIVer = "v1.0"
+
 type KSAPI
-   =     "v1.0" :> "inspections" :> "by_loc" :>
+   =     APIVer :> "inspections" :> "by_loc" :>
          QueryParam "key"        String :>
          QueryParam "pt"         T.Text :>
          QueryParam "dist"       Double :>
          QueryParam "min_score"  Double :>
          Get '[JSON] ByLocResults
 
-   :<|>  "v1.0" :> "inspections" :> "by_name" :>
+   :<|>  APIVer :> "inspections" :> "by_name" :>
          QueryParam "key"     String :>
          QueryParam "regex"   T.Text :>
          Get '[JSON] [D.Document]
 
-   :<|>  "v1.0" :> "inspections" :> "by_placeid" :> Capture "placeid" T.Text :>
+   :<|>  APIVer :> "inspections" :> "by_placeid" :> Capture "placeid" T.Text :>
          QueryParam "key" String :>
          Get '[JSON] [D.Document]
 
-   :<|>  "v1.0" :> "inspections" :> "by_source" :> Capture "criteria" T.Text :>
+   :<|>  APIVer :> "inspections" :> "by_source" :> Capture "criteria" T.Text :>
          QueryParam "key"     String :>
          QueryParam "sources" T.Text :>
          QueryParam "limit"   Limit :>
          Get '[JSON] [D.Document]
 
-   :<|>  "v1.0" :> "stats" :> "latest" :> "by_source" :>
+   :<|>  APIVer :> "stats" :> "latest" :> "by_source" :>
          QueryParam "key"     String :>
          QueryParam "sources" T.Text :>
          Get '[JSON] [Value]
 
-   :<|>  "v1.0" :> "version" :>
+   :<|>  APIVer :> "version" :>
          Get '[JSON] Value
 
 
