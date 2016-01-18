@@ -5,6 +5,8 @@ import           Control.Monad ( when )
 import qualified Data.ByteString.Lazy.Char8 as BL
 import           Data.Digest.Pure.SHA ( sha1, showDigest )
 import           Data.List ( intercalate )
+import           Data.Version ( showVersion )
+import           Paths_ks_server ( version )
 import           Prelude hiding ( words )
 import           System.Environment ( getArgs )
 
@@ -26,6 +28,8 @@ main = do
       , "   akRevoked = 0"
       , ""
       , "So, read-only is 2, read-write is 3 and revoked is 0"
+      , ""
+      , "Version " ++ (showVersion version) ++ "  Dino Morelli <dino@ui3.info>"
       ]
 
    let (permsStr : name : desc : words) = allArgs
