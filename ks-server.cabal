@@ -1,5 +1,5 @@
 name: ks-server
-version: 1.9
+version: 1.10
 cabal-version: >=1.10
 build-type: Simple
 license: ISC
