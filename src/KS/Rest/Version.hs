@@ -1,25 +1,25 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Version ( handler )
+module KS.Rest.Version ( handler )
    where
 
 import Control.Monad.Trans ( liftIO )
 import Control.Monad.Trans.Either ( EitherT )
 import Data.Aeson ( Value, (.=), object )
 import Data.Version ( showVersion )
-import Paths_ks_server ( version )
+import Paths_ks_rest ( version )
 import Servant ( ServantErr )
 
-import KS.Server.Log ( lineM )
+import KS.Rest.Log ( lineM )
 
 
-ksServerVersion, ksAPIVersion :: String
+ksRestServerVersion, ksRestAPIVersion :: String
 
 -- This comes from the .cabal file
-ksServerVersion = showVersion version
+ksRestServerVersion = showVersion version
 
-ksAPIVersion = "1.0"
+ksRestAPIVersion = "1.0"
 
 
 handler :: EitherT ServantErr IO Value
@@ -27,6 +27,6 @@ handler = do
    liftIO $ lineM
 
    return $ object
-      [ "ks_server_version" .= ksServerVersion
-      , "ks_api_version" .= ksAPIVersion
+      [ "ks_rest_server_version" .= ksRestServerVersion
+      , "ks_rest_api_version" .= ksRestAPIVersion
       ]

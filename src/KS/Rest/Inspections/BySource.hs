@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Inspections.BySource
+module KS.Rest.Inspections.BySource
    ( defaultLimit, handler )
    where
 
@@ -16,10 +16,10 @@ import           Servant ( ServantErr (errBody) , err400 )
 import           Text.Printf ( printf )
 
 import qualified KS.Data.Document as D
-import           KS.Server.APIKey ( akRead )
-import           KS.Server.Config ( Config (mongoConf), MongoConf (database) )
-import           KS.Server.Log ( infoM, lineM, lname, warningM )
-import           KS.Server.Util ( requiredParam, verifyAPIKey )
+import           KS.Rest.APIKey ( akRead )
+import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
+import           KS.Rest.Log ( infoM, lineM, lname, warningM )
+import           KS.Rest.Util ( requiredParam, verifyAPIKey )
 
 
 defaultLimit :: Limit

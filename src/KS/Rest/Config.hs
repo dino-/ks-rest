@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Config
+module KS.Rest.Config
    ( Config (..)
    , MongoConf (..)
    , loadConfig
@@ -13,7 +13,7 @@ import           System.FilePath ( (</>) )
 import           System.Log ( Priority )
 import           TCE.Data.ReadConf ( readConfig )
 
-import           KS.Server.APIKey ( APIKeys )
+import           KS.Rest.APIKey ( APIKeys )
 
 
 data Config = Config
@@ -37,5 +37,5 @@ data MongoConf = MongoConf
 
 loadConfig :: FilePath -> IO Config
 loadConfig confDir = do
-   let confPath = confDir </> "ks-server.conf"
+   let confPath = confDir </> "ks-rest.conf"
    (either error id . readConfig) `fmap` readFile confPath

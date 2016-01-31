@@ -4,7 +4,7 @@ set -e
 
 installDir="/opt/ksnitch"
 sandboxDir="../cabal-sandbox"
-project="ks-server"
+project="ks-rest"
 version=$(perl -n -e '/^version: (.*)/ && print $1' ${project}.cabal)
 
 

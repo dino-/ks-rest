@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Inspections.ByName ( handler )
+module KS.Rest.Inspections.ByName ( handler )
    where
 
 import           Control.Monad.Trans ( liftIO )
@@ -13,10 +13,10 @@ import           Database.MongoDB hiding ( options )
 import           Servant ( ServantErr )
 
 import qualified KS.Data.Document as D
-import           KS.Server.APIKey ( akRead )
-import           KS.Server.Config ( Config (mongoConf), MongoConf (database) )
-import           KS.Server.Log ( infoM, lineM, lname )
-import           KS.Server.Util ( requiredParam, verifyAPIKey )
+import           KS.Rest.APIKey ( akRead )
+import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
+import           KS.Rest.Log ( infoM, lineM, lname )
+import           KS.Rest.Util ( requiredParam, verifyAPIKey )
 
 
 handler :: Config -> Pipe -> Maybe String -> Maybe T.Text

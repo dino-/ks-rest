@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Stats.Latest ( handler )
+module KS.Rest.Stats.Latest ( handler )
    where
 
 import           Control.Monad.Trans ( liftIO )
@@ -12,10 +12,10 @@ import qualified Data.Text as T
 import           Database.MongoDB hiding ( Value, options )
 import           Servant ( ServantErr )
 
-import           KS.Server.APIKey ( akRead )
-import           KS.Server.Config ( Config (mongoConf), MongoConf (database) )
-import           KS.Server.Log ( infoM, lineM, lname )
-import           KS.Server.Util ( requiredParam, verifyAPIKey )
+import           KS.Rest.APIKey ( akRead )
+import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
+import           KS.Rest.Log ( infoM, lineM, lname )
+import           KS.Rest.Util ( requiredParam, verifyAPIKey )
 
 
 handler

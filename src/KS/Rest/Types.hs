@@ -3,7 +3,7 @@
 
 {-# LANGUAGE DeriveGeneric #-}
 
-module KS.Server.Types
+module KS.Rest.Types
    where
 
 import Data.Aeson ( ToJSON, Value )

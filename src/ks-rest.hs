@@ -12,27 +12,27 @@ import           Data.Version ( showVersion )
 import           Database.MongoDB ( Limit, Pipe
                   , access, auth, connect, host, slaveOk )
 import           Network.Wai.Handler.Warp ( run )
-import           Paths_ks_server ( version )
+import           Paths_ks_rest ( version )
 import           Servant
 import           Servant.Docs
 import           System.Environment ( getArgs )
 import           System.Exit ( exitSuccess )
 import           Text.Printf ( printf )
 
-import           KS.Server.Config
+import           KS.Rest.Config
                   ( Config ( logPath, logPriority, mongoConf, webServerPort )
                   , MongoConf ( database, ip, password, username )
                   , loadConfig
                   )
 import qualified KS.Data.Document as D
-import qualified KS.Server.Inspections.ByLoc
-import qualified KS.Server.Inspections.ByName
-import qualified KS.Server.Inspections.ByPlaceID
-import qualified KS.Server.Inspections.BySource
-import qualified KS.Server.Stats.Latest
-import           KS.Server.Types ( ByLocResults (..) )
-import qualified KS.Server.Version
-import           KS.Server.Log ( initLogging, lineM, lname, noticeM )
+import qualified KS.Rest.Inspections.ByLoc
+import qualified KS.Rest.Inspections.ByName
+import qualified KS.Rest.Inspections.ByPlaceID
+import qualified KS.Rest.Inspections.BySource
+import qualified KS.Rest.Stats.Latest
+import           KS.Rest.Types ( ByLocResults (..) )
+import qualified KS.Rest.Version
+import           KS.Rest.Log ( initLogging, lineM, lname, noticeM )
 
 
 type APIVer = "v1.0"
@@ -71,12 +71,12 @@ type KSAPI
 
 server :: Config -> Pipe -> Server KSAPI
 server conf pipe
-   =     KS.Server.Inspections.ByLoc.handler conf pipe
-   :<|>  KS.Server.Inspections.ByName.handler conf pipe
-   :<|>  KS.Server.Inspections.ByPlaceID.handler conf pipe
-   :<|>  KS.Server.Inspections.BySource.handler conf pipe
-   :<|>  KS.Server.Stats.Latest.handler conf pipe
-   :<|>  KS.Server.Version.handler
+   =     KS.Rest.Inspections.ByLoc.handler conf pipe
+   :<|>  KS.Rest.Inspections.ByName.handler conf pipe
+   :<|>  KS.Rest.Inspections.ByPlaceID.handler conf pipe
+   :<|>  KS.Rest.Inspections.BySource.handler conf pipe
+   :<|>  KS.Rest.Stats.Latest.handler conf pipe
+   :<|>  KS.Rest.Version.handler
 
 
 ksAPI :: Proxy KSAPI
@@ -151,14 +151,14 @@ instance ToParam (QueryParam "dist" Double) where
    toParam _ = DocQueryParam
       "dist"                              -- name
       ["2000"]                            -- example values
-      ("Distance in meters for location search. This is a value in meters, defaults to " ++ (show KS.Server.Inspections.ByLoc.defaultDistance))
+      ("Distance in meters for location search. This is a value in meters, defaults to " ++ (show KS.Rest.Inspections.ByLoc.defaultDistance))
       Normal
 
 instance ToParam (QueryParam "min_score" Double) where
    toParam _ = DocQueryParam
       "min_score"                         -- name
       ["97.5"]                            -- example values
-      ("The minimum inspection score cut-off, only values higher than this will be returned. Defaults to " ++ (show KS.Server.Inspections.ByLoc.defaultMinScore))
+      ("The minimum inspection score cut-off, only values higher than this will be returned. Defaults to " ++ (show KS.Rest.Inspections.ByLoc.defaultMinScore))
       Normal
 
 instance ToParam (QueryParam "key" String) where
@@ -191,7 +191,7 @@ instance ToParam (QueryParam "limit" Limit) where
    toParam _ = DocQueryParam
       "limit"                             -- name
       ["50", "200"]                       -- example values
-      ("Number of inspections to limit response to. Defaults to " ++ (show KS.Server.Inspections.BySource.defaultLimit))
+      ("Number of inspections to limit response to. Defaults to " ++ (show KS.Rest.Inspections.BySource.defaultLimit))
       Normal
 
 instance ToCapture (Capture "criteria" T.Text) where

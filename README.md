@@ -1,4 +1,4 @@
-# ks-server
+# ks-rest
 
 
 ## Synopsis
@@ -30,9 +30,9 @@ On Ubuntu:
 
     # apt-get install --reinstall g++ 
 
-Get the `ks-server` source code
+Get the `ks-rest` source code
 
-    $ darcs get http://hub.darcs.net/dino/ks-server
+    $ darcs get http://hub.darcs.net/dino/ks-rest
 
 Update your cabal library and tools, we need a modern version
 
@@ -59,7 +59,7 @@ ks-download:
 
 And you should be good for development from here. Run it:
 
-    $ cabal run ks-server -- PATH/TO/DIR/CONTAINING/CONF
+    $ cabal run ks-rest -- PATH/TO/DIR/CONTAINING/CONF
 
 
 ### Building for deployment
@@ -67,15 +67,15 @@ And you should be good for development from here. Run it:
 This will build everything into a deployable directory structure
 that you can put somewhere like `/opt/` for instance.
 
-    $ cabal install --prefix=/tmp/ks-server-VER --datasubdir=.
+    $ cabal install --prefix=/tmp/ks-rest-VER --datasubdir=.
     $ pushd /tmp
-    $ tar czvf ks-download-VER.tgz ks-server-VER
+    $ tar czvf ks-download-VER.tgz ks-rest-VER
     $ popd
 
 
 Running the server. Once you get it installed, run like this:
 
-    $ ks-server PATH/TO/DIR/CONTAINING/CONF
+    $ ks-rest PATH/TO/DIR/CONTAINING/CONF
 
 
 ## Contact

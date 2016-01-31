@@ -6,11 +6,11 @@ import qualified Data.ByteString.Lazy.Char8 as BL
 import           Data.Digest.Pure.SHA ( sha1, showDigest )
 import           Data.List ( intercalate )
 import           Data.Version ( showVersion )
-import           Paths_ks_server ( version )
+import           Paths_ks_rest ( version )
 import           Prelude hiding ( words )
 import           System.Environment ( getArgs )
 
-import           KS.Server.APIKey ( APIKey (..) )
+import           KS.Rest.APIKey ( APIKey (..) )
 
 
 main :: IO ()

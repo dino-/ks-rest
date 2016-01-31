@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Util
+module KS.Rest.Util
    ( requiredParam
    , verifyAPIKey
    )
@@ -17,9 +17,9 @@ import Servant ( ServantErr (errBody)
    , err401    -- Unauthorized
    )
 
-import qualified KS.Server.APIKey as AK
-import           KS.Server.Config ( Config (apiKeys) )
-import           KS.Server.Log ( infoM, lname, noticeM )
+import qualified KS.Rest.APIKey as AK
+import           KS.Rest.Config ( Config (apiKeys) )
+import           KS.Rest.Log ( infoM, lname, noticeM )
 
 
 {- Attempt to extract the a from a parameter (Maybe a) value and

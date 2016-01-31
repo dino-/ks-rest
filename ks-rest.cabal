@@ -1,4 +1,4 @@
-name: ks-server
+name: ks-rest
 version: 1.10
 cabal-version: >=1.10
 build-type: Simple
@@ -13,14 +13,14 @@ category: Network
 author: Dino Morelli
 data-files:
     resources/bin/stress.sh
-    resources/ks-server.conf
+    resources/ks-rest.conf
 extra-source-files:
     changelog.md
     README.md
     util/install.sh
 
-executable ks-server
-    main-is: ks-server.hs
+executable ks-rest
+    main-is: ks-rest.hs
     build-depends:
         base >=3 && <5,
         aeson ==0.9.*,
@@ -48,17 +48,17 @@ executable ks-server
     default-extensions: OverloadedStrings
     hs-source-dirs: src
     other-modules:
-        KS.Server.APIKey
-        KS.Server.Config
-        KS.Server.Inspections.ByLoc
-        KS.Server.Inspections.ByName
-        KS.Server.Inspections.ByPlaceID
-        KS.Server.Inspections.BySource
-        KS.Server.Log
-        KS.Server.Stats.Latest
-        KS.Server.Types
-        KS.Server.Util
-        KS.Server.Version
+        KS.Rest.APIKey
+        KS.Rest.Config
+        KS.Rest.Inspections.ByLoc
+        KS.Rest.Inspections.ByName
+        KS.Rest.Inspections.ByPlaceID
+        KS.Rest.Inspections.BySource
+        KS.Rest.Log
+        KS.Rest.Stats.Latest
+        KS.Rest.Types
+        KS.Rest.Util
+        KS.Rest.Version
     ghc-options: -Wall
 
 executable ks-api-keygen
@@ -71,8 +71,8 @@ executable ks-api-keygen
     default-language: Haskell2010
     hs-source-dirs: src
     other-modules:
-        KS.Server.APIKey
-        KS.Server.Config
-        KS.Server.Log
+        KS.Rest.APIKey
+        KS.Rest.Config
+        KS.Rest.Log
     ghc-options: -Wall
 

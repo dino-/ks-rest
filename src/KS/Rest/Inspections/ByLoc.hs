@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.Inspections.ByLoc
+module KS.Rest.Inspections.ByLoc
    ( defaultDistance, defaultMinScore, handler )
    where
 
@@ -14,11 +14,11 @@ import           Database.MongoDB hiding ( Value, options )
 import           Servant ( ServantErr )
 import           Text.Printf ( printf )
 
-import           KS.Server.APIKey ( akRead )
-import           KS.Server.Config ( Config (mongoConf), MongoConf (database) )
-import           KS.Server.Log ( infoM, lineM, lname )
-import           KS.Server.Types ( ByLocResults (..) )
-import           KS.Server.Util ( requiredParam, verifyAPIKey )
+import           KS.Rest.APIKey ( akRead )
+import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
+import           KS.Rest.Log ( infoM, lineM, lname )
+import           KS.Rest.Types ( ByLocResults (..) )
+import           KS.Rest.Util ( requiredParam, verifyAPIKey )
 
 
 -- Default query distance in meters

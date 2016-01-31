@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Server.APIKey
+module KS.Rest.APIKey
    ( APIKeys, APIKey (..), APIKeyValue, APIKeyPermissions
    , akRead, akWrite, akRevoked
    , isSet
