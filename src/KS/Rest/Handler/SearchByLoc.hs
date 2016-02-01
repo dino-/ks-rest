@@ -1,8 +1,8 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Rest.Inspections.ByLoc
-   ( defaultDistance, defaultMinScore, handler )
+module KS.Rest.Handler.SearchByLoc
+   ( defaultMinScore, handler )
    where
 
 import           Control.Monad.Trans ( liftIO )
@@ -21,41 +21,37 @@ import           KS.Rest.Types ( ByLocResults (..) )
 import           KS.Rest.Util ( requiredParam, verifyAPIKey )
 
 
--- Default query distance in meters
-defaultDistance :: Double
-defaultDistance = 800
-
-
 defaultMinScore :: Double
 defaultMinScore = 0.0
 
 
 handler
    :: Config -> Pipe
-   -> Maybe String -> Maybe T.Text -> Maybe Double -> Maybe Double
+   -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double -> Maybe Double
    -> EitherT ServantErr IO ByLocResults
-handler conf pipe mbKey mbPT mbDist mbMinScore = do
+handler conf pipe mbKey mbLat mbLng mbDist mbMinScore = do
    liftIO $ lineM
 
    let mc = mongoConf conf
 
-   _ <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
-   pt <- parseLngLat <$> requiredParam "pt" mbPT
-   let dist = maybe defaultDistance id mbDist
-   let minScore = maybe defaultMinScore id mbMinScore
+   _              <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
+   lat            <- requiredParam "lat" mbLat
+   lng            <- requiredParam "lng" mbLng
+   dist           <- requiredParam "dist" mbDist
+   let minScore   =  maybe defaultMinScore id mbMinScore
 
    liftIO $ infoM lname
-      $ printf "by_loc received, pt: %s, dist: %f, minScore: %f"
-      (show pt) dist minScore
+      $ printf "search by loc received, lat: %f, lng %f, dist: %f, min_score: %f"
+      lat lng dist minScore
 
    r <- access pipe slaveOk (database mc) $ runCommand (
       [ "geoNear" =: ("recent_inspections" :: T.Text)
       , "near" =:
          [ "type" =: ("Point" :: T.Text)
-         , "coordinates" =: pt
+         , "coordinates" =: [ lng, lat ]
          ]
       , "spherical" =: True
-      , "limit" =: (5000 :: Int)
+      , "limit" =: (5000 :: Int)  -- FIXME Do we need this?
       , "maxDistance" =: dist
       , "query" =: [ "inspection.score" =: [ "$gte" =: minScore ] ]
       ])
@@ -68,7 +64,3 @@ handler conf pipe mbKey mbPT mbDist mbMinScore = do
    -- The inspections and their distances, side-by-side
    --    [ { obj: { _id: ... }, dis: 799.72633 }, ... ]
    return $ ByLocResults $ map (Object . toAeson) bsonDocs
-
-
-parseLngLat :: T.Text -> [Double]
-parseLngLat = map (read . T.unpack) . (T.split (== ','))

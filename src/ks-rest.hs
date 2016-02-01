@@ -25,7 +25,7 @@ import           KS.Rest.Config
                   , loadConfig
                   )
 import qualified KS.Data.Document as D
-import qualified KS.Rest.Inspections.ByLoc
+import qualified KS.Rest.Handler.SearchByLoc
 import qualified KS.Rest.Inspections.ByName
 import qualified KS.Rest.Inspections.ByPlaceID
 import qualified KS.Rest.Inspections.BySource
@@ -38,9 +38,10 @@ import           KS.Rest.Log ( initLogging, lineM, lname, noticeM )
 type APIVer = "v1.0"
 
 type KSAPI
-   =     APIVer :> "inspections" :> "by_loc" :>
+   =     APIVer :> "inspections" :> "recent" :>
          QueryParam "key"        String :>
-         QueryParam "pt"         T.Text :>
+         QueryParam "lat"        Double :>
+         QueryParam "lng"        Double :>
          QueryParam "dist"       Double :>
          QueryParam "min_score"  Double :>
          Get '[JSON] ByLocResults
@@ -71,7 +72,7 @@ type KSAPI
 
 server :: Config -> Pipe -> Server KSAPI
 server conf pipe
-   =     KS.Rest.Inspections.ByLoc.handler conf pipe
+   =     KS.Rest.Handler.SearchByLoc.handler conf pipe
    :<|>  KS.Rest.Inspections.ByName.handler conf pipe
    :<|>  KS.Rest.Inspections.ByPlaceID.handler conf pipe
    :<|>  KS.Rest.Inspections.BySource.handler conf pipe
@@ -147,18 +148,32 @@ instance ToParam (QueryParam "pt" T.Text) where
       "The center point of a location search. This is a lat, lng pair in that order."
       Normal
 
+instance ToParam (QueryParam "lat" Double) where
+   toParam _ = DocQueryParam
+      "lat"                              -- name
+      ["35.7819225"]                     -- example values
+      ("Latitude value")
+      Normal
+
+instance ToParam (QueryParam "lng" Double) where
+   toParam _ = DocQueryParam
+      "lng"                              -- name
+      ["-78.6484261"]                    -- example values
+      ("Longitude value")
+      Normal
+
 instance ToParam (QueryParam "dist" Double) where
    toParam _ = DocQueryParam
       "dist"                              -- name
       ["2000"]                            -- example values
-      ("Distance in meters for location search. This is a value in meters, defaults to " ++ (show KS.Rest.Inspections.ByLoc.defaultDistance))
+      ("Distance in meters for location search. This is a value in meters.")
       Normal
 
 instance ToParam (QueryParam "min_score" Double) where
    toParam _ = DocQueryParam
       "min_score"                         -- name
       ["97.5"]                            -- example values
-      ("The minimum inspection score cut-off, only values higher than this will be returned. Defaults to " ++ (show KS.Rest.Inspections.ByLoc.defaultMinScore))
+      ("The minimum inspection score cut-off, only values higher than this will be returned. Defaults to " ++ (show KS.Rest.Handler.SearchByLoc.defaultMinScore))
       Normal
 
 instance ToParam (QueryParam "key" String) where
