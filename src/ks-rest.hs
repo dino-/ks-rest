@@ -25,6 +25,7 @@ import           KS.Rest.Config
                   , loadConfig
                   )
 import qualified KS.Data.Document as D
+import qualified KS.Rest.Handler.Latest
 import qualified KS.Rest.Handler.SearchByLoc
 import qualified KS.Rest.Inspections.ByName
 import qualified KS.Rest.Inspections.ByPlaceID
@@ -61,6 +62,15 @@ type KSAPI
          QueryParam "limit"   Limit :>
          Get '[JSON] [D.Document]
 
+   :<|>  APIVer :> "inspections" :> "all" :>
+         QueryParam "key"     String :>
+         QueryParam "lat"     Double :>
+         QueryParam "lng"     Double :>
+         QueryParam "dist"    Double :>
+         QueryParam "limit"   Limit :>
+         QueryParam "sort"    T.Text :>
+         Get '[JSON] [D.Document]
+
    :<|>  APIVer :> "stats" :> "latest" :> "by_source" :>
          QueryParam "key"     String :>
          QueryParam "sources" T.Text :>
@@ -76,6 +86,7 @@ server conf pipe
    :<|>  KS.Rest.Inspections.ByName.handler conf pipe
    :<|>  KS.Rest.Inspections.ByPlaceID.handler conf pipe
    :<|>  KS.Rest.Inspections.BySource.handler conf pipe
+   :<|>  KS.Rest.Handler.Latest.handler conf pipe
    :<|>  KS.Rest.Stats.Latest.handler conf pipe
    :<|>  KS.Rest.Version.handler
 
@@ -181,6 +192,13 @@ instance ToParam (QueryParam "key" String) where
       "key"                                        -- name
       ["c6d4376da7119afff1de3d5af43723b8afcc3a85"] -- example values
       "API key"
+      Normal
+
+instance ToParam (QueryParam "sort" T.Text) where
+   toParam _ = DocQueryParam
+      "sort"                        -- name
+      ["+score", "-score", "-date"] -- example values
+      "Sort direction and inspection field"
       Normal
 
 instance ToParam (QueryParam "regex" T.Text) where
