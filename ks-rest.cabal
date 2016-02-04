@@ -50,8 +50,8 @@ executable ks-rest
     other-modules:
         KS.Rest.APIKey
         KS.Rest.Config
-        KS.Rest.Handler.Latest
         KS.Rest.Handler.SearchByLoc
+        KS.Rest.Handler.SearchByLocWithSort
         KS.Rest.Inspections.ByName
         KS.Rest.Inspections.ByPlaceID
         KS.Rest.Inspections.BySource

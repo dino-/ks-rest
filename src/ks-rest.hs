@@ -25,13 +25,14 @@ import           KS.Rest.Config
                   , loadConfig
                   )
 import qualified KS.Data.Document as D
-import qualified KS.Rest.Handler.Latest
 import qualified KS.Rest.Handler.SearchByLoc
+import qualified KS.Rest.Handler.SearchByLocWithSort
 import qualified KS.Rest.Inspections.ByName
 import qualified KS.Rest.Inspections.ByPlaceID
 import qualified KS.Rest.Inspections.BySource
 import qualified KS.Rest.Stats.Latest
 import           KS.Rest.Types ( ByLocResults (..) )
+import           KS.Rest.Util ( coll_inspections_all, coll_inspections_recent )
 import qualified KS.Rest.Version
 import           KS.Rest.Log ( initLogging, lineM, lname, noticeM )
 
@@ -39,7 +40,7 @@ import           KS.Rest.Log ( initLogging, lineM, lname, noticeM )
 type APIVer = "v1.0"
 
 type KSAPI
-   =     APIVer :> "inspections" :> "recent" :>
+   =     APIVer :> "inspections" :> "recent" :> "near" :>
          QueryParam "key"        String :>
          QueryParam "lat"        Double :>
          QueryParam "lng"        Double :>
@@ -47,22 +48,16 @@ type KSAPI
          QueryParam "min_score"  Double :>
          Get '[JSON] ByLocResults
 
-   :<|>  APIVer :> "inspections" :> "by_name" :>
+   :<|>  APIVer :> "inspections" :> "all" :> "name" :>
          QueryParam "key"     String :>
          QueryParam "regex"   T.Text :>
          Get '[JSON] [D.Document]
 
-   :<|>  APIVer :> "inspections" :> "by_placeid" :> Capture "placeid" T.Text :>
+   :<|>  APIVer :> "inspections" :> "all" :> "placeid" :> Capture "placeid" T.Text :>
          QueryParam "key" String :>
          Get '[JSON] [D.Document]
 
-   :<|>  APIVer :> "inspections" :> "by_source" :> Capture "criteria" T.Text :>
-         QueryParam "key"     String :>
-         QueryParam "sources" T.Text :>
-         QueryParam "limit"   Limit :>
-         Get '[JSON] [D.Document]
-
-   :<|>  APIVer :> "inspections" :> "all" :>
+   :<|>  APIVer :> "inspections" :> "recent" :> "sorted" :>
          QueryParam "key"     String :>
          QueryParam "lat"     Double :>
          QueryParam "lng"     Double :>
@@ -70,6 +65,26 @@ type KSAPI
          QueryParam "limit"   Limit :>
          QueryParam "sort"    T.Text :>
          Get '[JSON] [D.Document]
+
+   :<|>  APIVer :> "inspections" :> "all" :> "sorted" :>
+         QueryParam "key"     String :>
+         QueryParam "lat"     Double :>
+         QueryParam "lng"     Double :>
+         QueryParam "dist"    Double :>
+         QueryParam "limit"   Limit :>
+         QueryParam "sort"    T.Text :>
+         Get '[JSON] [D.Document]
+
+   {-
+   :<|>  APIVer :> "inspections" :> "recent" :> "placeid" :> Capture "placeid"
+         QueryParam "key"     String :>
+         Get '[JSON] [D.Document]
+
+   :<|>  APIVer :> "inspections" :> "recent" :> "placeid"
+         QueryParam "key"     String :>
+         ReqBody '[JSON] PlaceIDs :>
+         Post '[JSON] [D.Document]
+   -}
 
    :<|>  APIVer :> "stats" :> "latest" :> "by_source" :>
          QueryParam "key"     String :>
@@ -85,8 +100,8 @@ server conf pipe
    =     KS.Rest.Handler.SearchByLoc.handler conf pipe
    :<|>  KS.Rest.Inspections.ByName.handler conf pipe
    :<|>  KS.Rest.Inspections.ByPlaceID.handler conf pipe
-   :<|>  KS.Rest.Inspections.BySource.handler conf pipe
-   :<|>  KS.Rest.Handler.Latest.handler conf pipe
+   :<|>  KS.Rest.Handler.SearchByLocWithSort.handler conf pipe coll_inspections_recent
+   :<|>  KS.Rest.Handler.SearchByLocWithSort.handler conf pipe coll_inspections_all
    :<|>  KS.Rest.Stats.Latest.handler conf pipe
    :<|>  KS.Rest.Version.handler
 

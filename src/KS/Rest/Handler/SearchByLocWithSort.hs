@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Rest.Handler.Latest
+module KS.Rest.Handler.SearchByLocWithSort
    ( defaultLimit, handler )
    where
 
@@ -27,12 +27,12 @@ defaultLimit = 100
 
 
 handler
-   :: Config -> Pipe
+   :: Config -> Pipe -> Collection
    -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double
    -> Maybe Limit -> Maybe T.Text
    -> EitherT ServantErr IO [D.Document]
 handler
-   conf pipe
+   conf pipe collection
    mbKey mbLat mbLng mbDist
    mbLimit mbSort = do
 
@@ -48,8 +48,9 @@ handler
    sort'       <- requiredParam "sort" mbSort >>= parseSortParam
 
    liftIO $ infoM lname
-      $ printf "inspections all latest received, lat: %f, lng: %f, dist: (%s), limit: %d, sort: %s"
-      lat lng (show mbDist) (limit' :: Limit) (show sort')
+      -- $ printf "inspections all latest received, lat: %f, lng: %f, dist: (%s), limit: %d, sort: %s"
+      $ printf "%s search received, lat: %f, lng: %f, dist: (%s), limit: %d, sort: %s"
+      (show collection) lat lng (show mbDist) (limit' :: Limit) (show sort')
 
    ds <- access pipe slaveOk (database mc) $ do
       rest =<< find ( select
@@ -62,7 +63,7 @@ handler
                ]
             ]
          --, "blah.date" =: ???
-         ] "inspections"
+         ] collection
          ) { sort = sort' , limit = limit' }
 
    liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length ds

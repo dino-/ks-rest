@@ -2,7 +2,8 @@
 -- Author: Dino Morelli <dino@ui3.info>
 
 module KS.Rest.Util
-   ( metersToEarthRadians
+   ( coll_inspections_all, coll_inspections_recent
+   , metersToEarthRadians
    , parseSortParam
    , requiredParam
    , verifyAPIKey
@@ -14,7 +15,7 @@ import           Control.Monad.Trans.Either ( EitherT, left )
 import qualified Data.ByteString.Lazy.Char8 as C
 import           Data.ByteString.Lazy ( ByteString, concat )
 import qualified Data.Text as T
-import           Database.MongoDB ( Order, (=:) )
+import           Database.MongoDB ( Order, Collection, (=:) )
 import           Prelude hiding ( concat )
 import           Servant
                   ( ServantErr (errBody)
@@ -25,6 +26,11 @@ import           Servant
 import qualified KS.Rest.APIKey as AK
 import           KS.Rest.Config ( Config (apiKeys) )
 import           KS.Rest.Log ( infoM, lname, noticeM )
+
+
+coll_inspections_all, coll_inspections_recent :: Collection
+coll_inspections_all = "inspections"
+coll_inspections_recent = "recent_inspections"
 
 
 {- Attempt to extract the a from a parameter (Maybe a) value and
