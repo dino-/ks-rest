@@ -173,11 +173,11 @@ parseArgs = do
 
 -- Documentation
 
-instance ToParam (QueryParam "pt" T.Text) where
+instance ToParam (QueryParam "key" String) where
    toParam _ = DocQueryParam
-      "pt"                                -- name
-      ["35.582905,-78.134563"]            -- example values
-      "The center point of a location search. This is a lat, lng pair in that order."
+      "key"                                        -- name
+      ["c6d4376da7119afff1de3d5af43723b8afcc3a85"] -- example values
+      "API key"
       Normal
 
 instance ToParam (QueryParam "lat" Double) where
@@ -208,13 +208,6 @@ instance ToParam (QueryParam "min_score" Double) where
       ("The minimum inspection score cut-off, only values higher than this will be returned. Defaults to " ++ (show KS.Rest.Handler.SearchByLoc.defaultMinScore))
       Normal
 
-instance ToParam (QueryParam "key" String) where
-   toParam _ = DocQueryParam
-      "key"                                        -- name
-      ["c6d4376da7119afff1de3d5af43723b8afcc3a85"] -- example values
-      "API key"
-      Normal
-
 instance ToParam (QueryParam "sort" T.Text) where
    toParam _ = DocQueryParam
       "sort"                        -- name
@@ -234,6 +227,7 @@ instance ToCapture (Capture "placeid" T.Text) where
       "placeid"                           -- name
       "Google Places ID to return"        -- description
 
+-- FIXME This goes away when we redesign stats
 instance ToParam (QueryParam "sources" T.Text) where
    toParam _ = DocQueryParam
       "sources"                           -- name
@@ -247,11 +241,6 @@ instance ToParam (QueryParam "limit" Limit) where
       ["50", "200"]                       -- example values
       ("Number of inspections to limit response to. Defaults to " ++ (show KS.Rest.Inspections.BySource.defaultLimit))
       Normal
-
-instance ToCapture (Capture "criteria" T.Text) where
-   toCapture _ = DocCapture
-      "criteria"                          -- name
-      "Which kind of by_source query to perform. Possible values: high low latest"
 
 instance ToSample ByLocResults ByLocResults where
    toSample _ = Just $ ByLocResults
