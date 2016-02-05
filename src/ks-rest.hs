@@ -40,6 +40,7 @@ import           KS.Rest.Log ( initLogging, lineM, lname, noticeM )
 type APIVer = "v1.0"
 
 type KSAPI
+   -- search, by loc
    =     APIVer :> "inspections" :> "recent" :> "near" :>
          QueryParam "key"        String :>
          QueryParam "lat"        Double :>
@@ -48,15 +49,18 @@ type KSAPI
          QueryParam "min_score"  Double :>
          Get '[JSON] ByLocResults
 
+   -- search, place name matches regex
    :<|>  APIVer :> "inspections" :> "all" :> "name" :>
          QueryParam "key"     String :>
          QueryParam "regex"   T.Text :>
          Get '[JSON] [D.Document]
 
+   -- history of one particular place
    :<|>  APIVer :> "inspections" :> "all" :> "placeid" :> Capture "placeid" T.Text :>
          QueryParam "key" String :>
          Get '[JSON] [D.Document]
 
+   -- when sorted by score, used for high/low
    :<|>  APIVer :> "inspections" :> "recent" :> "sorted" :>
          QueryParam "key"     String :>
          QueryParam "lat"     Double :>
@@ -66,6 +70,7 @@ type KSAPI
          QueryParam "sort"    T.Text :>
          Get '[JSON] [D.Document]
 
+   -- when sorted by date, used for latest
    :<|>  APIVer :> "inspections" :> "all" :> "sorted" :>
          QueryParam "key"     String :>
          QueryParam "lat"     Double :>
@@ -76,6 +81,7 @@ type KSAPI
          Get '[JSON] [D.Document]
 
    {-
+   -- favorites
    :<|>  APIVer :> "inspections" :> "recent" :> "placeid" :> Capture "placeid"
          QueryParam "key"     String :>
          Get '[JSON] [D.Document]
