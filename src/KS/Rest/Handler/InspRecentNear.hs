@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Rest.Handler.SearchByLoc
+module KS.Rest.Handler.InspRecentNear
    ( defaultMinScore, handler )
    where
 

@@ -50,16 +50,15 @@ executable ks-rest
     other-modules:
         KS.Rest.APIKey
         KS.Rest.Config
-        KS.Rest.Handler.SearchByLoc
-        KS.Rest.Handler.SearchByLocWithSort
-        KS.Rest.Inspections.ByName
-        KS.Rest.Inspections.ByPlaceID
-        KS.Rest.Inspections.BySource
+        KS.Rest.Handler.InspAllName
+        KS.Rest.Handler.InspAllPlaceIDCap
+        KS.Rest.Handler.InspRecentNear
+        KS.Rest.Handler.InspSorted
+        KS.Rest.Handler.StatsLatest
+        KS.Rest.Handler.Version
         KS.Rest.Log
-        KS.Rest.Stats.Latest
         KS.Rest.Types
         KS.Rest.Util
-        KS.Rest.Version
     ghc-options: -Wall
 
 executable ks-api-keygen

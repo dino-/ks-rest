@@ -25,15 +25,14 @@ import           KS.Rest.Config
                   , loadConfig
                   )
 import qualified KS.Data.Document as D
-import qualified KS.Rest.Handler.SearchByLoc
-import qualified KS.Rest.Handler.SearchByLocWithSort
-import qualified KS.Rest.Inspections.ByName
-import qualified KS.Rest.Inspections.ByPlaceID
-import qualified KS.Rest.Inspections.BySource
-import qualified KS.Rest.Stats.Latest
+import qualified KS.Rest.Handler.InspAllName
+import qualified KS.Rest.Handler.InspAllPlaceIDCap
+import qualified KS.Rest.Handler.InspRecentNear
+import qualified KS.Rest.Handler.InspSorted
+import qualified KS.Rest.Handler.StatsLatest
+import qualified KS.Rest.Handler.Version
 import           KS.Rest.Types ( ByLocResults (..) )
 import           KS.Rest.Util ( coll_inspections_all, coll_inspections_recent )
-import qualified KS.Rest.Version
 import           KS.Rest.Log ( initLogging, lineM, lname, noticeM )
 
 
@@ -103,13 +102,13 @@ type KSAPI
 
 server :: Config -> Pipe -> Server KSAPI
 server conf pipe
-   =     KS.Rest.Handler.SearchByLoc.handler conf pipe
-   :<|>  KS.Rest.Inspections.ByName.handler conf pipe
-   :<|>  KS.Rest.Inspections.ByPlaceID.handler conf pipe
-   :<|>  KS.Rest.Handler.SearchByLocWithSort.handler conf pipe coll_inspections_recent
-   :<|>  KS.Rest.Handler.SearchByLocWithSort.handler conf pipe coll_inspections_all
-   :<|>  KS.Rest.Stats.Latest.handler conf pipe
-   :<|>  KS.Rest.Version.handler
+   =     KS.Rest.Handler.InspRecentNear.handler conf pipe
+   :<|>  KS.Rest.Handler.InspAllName.handler conf pipe
+   :<|>  KS.Rest.Handler.InspAllPlaceIDCap.handler conf pipe
+   :<|>  KS.Rest.Handler.InspSorted.handler conf pipe coll_inspections_recent
+   :<|>  KS.Rest.Handler.InspSorted.handler conf pipe coll_inspections_all
+   :<|>  KS.Rest.Handler.StatsLatest.handler conf pipe
+   :<|>  KS.Rest.Handler.Version.handler
 
 
 ksAPI :: Proxy KSAPI
@@ -205,7 +204,7 @@ instance ToParam (QueryParam "min_score" Double) where
    toParam _ = DocQueryParam
       "min_score"                         -- name
       ["97.5"]                            -- example values
-      ("The minimum inspection score cut-off, only values higher than this will be returned. Defaults to " ++ (show KS.Rest.Handler.SearchByLoc.defaultMinScore))
+      ("The minimum inspection score cut-off, only values higher than this will be returned. Defaults to " ++ (show KS.Rest.Handler.InspRecentNear.defaultMinScore))
       Normal
 
 instance ToParam (QueryParam "sort" T.Text) where
@@ -239,7 +238,7 @@ instance ToParam (QueryParam "limit" Limit) where
    toParam _ = DocQueryParam
       "limit"                             -- name
       ["50", "200"]                       -- example values
-      ("Number of inspections to limit response to. Defaults to " ++ (show KS.Rest.Inspections.BySource.defaultLimit))
+      ("Number of inspections to limit response to. Defaults to " ++ (show KS.Rest.Handler.InspSorted.defaultLimit))
       Normal
 
 instance ToSample ByLocResults ByLocResults where

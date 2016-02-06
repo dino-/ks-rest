@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Rest.Version ( handler )
+module KS.Rest.Handler.Version ( handler )
    where
 
 import Control.Monad.Trans ( liftIO )

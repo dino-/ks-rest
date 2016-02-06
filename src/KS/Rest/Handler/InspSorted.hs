@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Rest.Handler.SearchByLocWithSort
+module KS.Rest.Handler.InspSorted
    ( defaultLimit, handler )
    where
 

@@ -1,7 +1,7 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-module KS.Rest.Inspections.ByPlaceID ( handler )
+module KS.Rest.Handler.InspAllName ( handler )
    where
 
 import           Control.Monad.Trans ( liftIO )
@@ -11,7 +11,6 @@ import           Data.Maybe ( catMaybes )
 import qualified Data.Text as T
 import           Database.MongoDB hiding ( options )
 import           Servant ( ServantErr )
-import           Text.Printf ( printf )
 
 import qualified KS.Data.Document as D
 import           KS.Rest.APIKey ( akRead )
@@ -20,21 +19,20 @@ import           KS.Rest.Log ( infoM, lineM, lname )
 import           KS.Rest.Util ( requiredParam, verifyAPIKey )
 
 
-handler :: Config -> Pipe -> T.Text -> Maybe String
+handler :: Config -> Pipe -> Maybe String -> Maybe T.Text
    -> EitherT ServantErr IO [D.Document]
-handler conf pipe placeId mbKey = do
+handler conf pipe mbKey mbRegex = do
    liftIO $ lineM
 
    let mc = mongoConf conf
 
    _ <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
+   regex' <- requiredParam "regex" mbRegex
 
-   liftIO $ infoM lname $ "by_placeid received, placeid: " ++ (T.unpack placeId)
+   liftIO $ infoM lname $ "by_name received, regex: " ++ (T.unpack regex')
 
+   -- ds :: [Data.Bson.Document]
    ds <- access pipe slaveOk (database mc) $ rest =<<
-      find (select ["place.place_id" =: placeId] "inspections")
-         { sort = [ "inspection.date" =: (-1 :: Int) ] }
-
-   liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length ds
+      find (select ["place.name" =: Regex (regex' :: T.Text) "i"] "inspections")
 
    return $ catMaybes . map fromBSON $ ds
