@@ -19,6 +19,10 @@ extra-source-files:
     README.md
     util/install.sh
 
+source-repository head
+    type: darcs
+    location: http://hub.darcs.net/dino/ks-rest
+
 executable ks-rest
     main-is: ks-rest.hs
     build-depends:
