@@ -276,13 +276,14 @@ instance ToSample [Value] [Value] where
 
 instance ToSample Value Value where
    toSample _ = Just $ object
-      [ "ks_api_version" .= ("1.0" :: T.Text)
-      , "ks_server_version" .= ("1.7" :: T.Text)
+      [ "ks_rest_api_version" .= ("1.0" :: T.Text)
+      , "ks_rest_server_version" .= ("1.10" :: T.Text)
       ]
 
 
 apiDocs :: API
-apiDocs = docs ksAPI
+apiDocs = docsWithIntros [intro] ksAPI where
+   intro = DocIntro "REST API documentation" []
 
 
 inspMonkeyJoes :: D.Document
