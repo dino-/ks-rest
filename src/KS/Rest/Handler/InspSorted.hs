@@ -75,18 +75,23 @@ handler
 
 
 metersToEarthRadians :: Double -> Double
-metersToEarthRadians m = (mToKm m) / earthRadiansPerKm
+metersToEarthRadians m = (mToKm m) / kmPerEarthRadian
    where
       -- Convert meters to kilometers
       mToKm m' = m' * 0.001
 
-      -- Number of radians on the Earth coordinate system in
-      -- a kilometer
-      earthRadiansPerKm = 6378.1
+      -- The Earth coordinate system being used by MongoDB's
+      -- geoWithin indexing is: the circumference of the Earth measures
+      -- 2pi radians
+      -- So, with that in mind:
 
-      -- Number of radians on the Earth coordinate system in
-      -- a mile. Not used, but in case we have a future need.
-      --earthRadiansPerMile = 3963.2
+      -- Number of kilometers on the Earth coordinate system in a
+      -- single radian
+      kmPerEarthRadian = 6378.1
+
+      -- Number of miles on the Earth coordinate system in a
+      -- single radian
+      -- milesPerEarthRadian = 3963.2
 
 
 parseSortParam :: T.Text -> EitherT ServantErr IO Order
