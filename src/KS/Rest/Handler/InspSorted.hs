@@ -51,7 +51,6 @@ handler
    sort'       <- requiredParam "sort" mbSort >>= parseSortParam
 
    liftIO $ infoM lname
-      -- $ printf "inspections all latest received, lat: %f, lng: %f, dist: (%s), limit: %d, sort: %s"
       $ printf "%s search received, lat: %f, lng: %f, dist: (%s), limit: %d, sort: %s"
       (show collection) lat lng (show mbDist) (limit' :: Limit) (show sort')
 
