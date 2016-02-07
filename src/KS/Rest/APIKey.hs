@@ -48,14 +48,14 @@ isSet desiredPerms existingPerms =
    desiredPerms .&. existingPerms == desiredPerms
 
 
-verifyPermissions :: APIKeyPermissions -> APIKey -> Either String ()
-verifyPermissions desiredPerms (APIKey keyValue _ _ actualPerms)
-   | isSet desiredPerms actualPerms = Right ()
+verifyPermissions :: APIKeyPermissions -> APIKey -> Either String APIKey
+verifyPermissions desiredPerms ak@(APIKey keyValue _ _ actualPerms)
+   | isSet desiredPerms actualPerms = Right ak
    | otherwise = Left $ printf
       "Cannot verify API key %s because its permissions are %d but we are expecting %d"
       keyValue actualPerms desiredPerms
 
 
-verifyAPIKey :: APIKeyPermissions -> APIKeys -> APIKeyValue -> Either String ()
+verifyAPIKey :: APIKeyPermissions -> APIKeys -> APIKeyValue -> Either String APIKey
 verifyAPIKey desiredPerms keys keyValue =
    findAPIKey keys keyValue >>= verifyPermissions desiredPerms

@@ -39,16 +39,18 @@ requiredParam paramName = maybe (left $ err400 {
    return
 
 
-{- Very that an API key has the proper type
+{- Verify that an API key has the proper type
 -}
 verifyAPIKey :: Config -> AK.APIKeyPermissions -> AK.APIKeyValue
-   -> EitherT ServantErr IO AK.APIKeyValue
+   -> EitherT ServantErr IO AK.APIKey
 verifyAPIKey conf perms keyValue =
    case (AK.verifyAPIKey perms (apiKeys conf) keyValue) of
       Left msg -> do
          liftIO $ noticeM lname msg
          left $ err401 { errBody = pack msg}
-      Right _  -> do
+      Right ak  -> do
+         liftIO $ noticeM lname
+            $ "Successful authentication with API key: " ++ keyValue
          liftIO $ infoM lname
-            $ "Successful authentication with API key " ++ keyValue
-         return keyValue
+            $ "Full API key details: " ++ (show ak)
+         return ak
