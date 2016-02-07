@@ -227,8 +227,8 @@ instance ToParam (QueryParam "regex" T.Text) where
 
 instance ToCapture (Capture "placeid" T.Text) where
    toCapture _ = DocCapture
-      "placeid"                           -- name
-      "Google Places ID to return"        -- description
+      "placeid"                                                   -- name
+      "Google Places ID, example: `ChIJT6iXT3JfrIkRIga2syiYuGM`"  -- description
 
 
 instance ToParam (QueryParam "after" Int) where
