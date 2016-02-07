@@ -16,7 +16,7 @@ import qualified KS.Data.Document as D
 import           KS.Rest.APIKey ( akRead )
 import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
 import           KS.Rest.Log ( infoM, lineM, lname )
-import           KS.Rest.Util ( requiredParam, verifyAPIKey )
+import           KS.Rest.Util ( coll_inspections_all, requiredParam, verifyAPIKey )
 
 
 handler :: Config -> Pipe -> Maybe String -> Maybe T.Text
@@ -33,6 +33,7 @@ handler conf pipe mbKey mbRegex = do
 
    -- ds :: [Data.Bson.Document]
    ds <- access pipe slaveOk (database mc) $ rest =<<
-      find (select ["place.name" =: Regex (regex' :: T.Text) "i"] "inspections")
+      find (select ["place.name" =: Regex (regex' :: T.Text) "i"]
+         coll_inspections_all)
 
    return $ catMaybes . map fromBSON $ ds

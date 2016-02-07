@@ -18,7 +18,7 @@ import           KS.Rest.APIKey ( akRead )
 import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
 import           KS.Rest.Log ( infoM, lineM, lname )
 import           KS.Rest.Types ( ByLocResults (..) )
-import           KS.Rest.Util ( requiredParam, verifyAPIKey )
+import           KS.Rest.Util ( coll_inspections_recent, requiredParam, verifyAPIKey )
 
 
 defaultMinScore :: Double
@@ -45,7 +45,7 @@ handler conf pipe mbKey mbLat mbLng mbDist mbMinScore = do
       lat lng dist minScore
 
    r <- access pipe slaveOk (database mc) $ runCommand (
-      [ "geoNear" =: ("recent_inspections" :: T.Text)
+      [ "geoNear" =: coll_inspections_recent
       , "near" =:
          [ "type" =: ("Point" :: T.Text)
          , "coordinates" =: [ lng, lat ]

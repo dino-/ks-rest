@@ -17,7 +17,7 @@ import qualified KS.Data.Document as D
 import           KS.Rest.APIKey ( akRead )
 import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
 import           KS.Rest.Log ( infoM, lineM, lname )
-import           KS.Rest.Util ( requiredParam, verifyAPIKey )
+import           KS.Rest.Util ( coll_inspections_all, requiredParam, verifyAPIKey )
 
 
 handler :: Config -> Pipe -> T.Text -> Maybe String
@@ -32,7 +32,7 @@ handler conf pipe placeId mbKey = do
    liftIO $ infoM lname $ "by_placeid received, placeid: " ++ (T.unpack placeId)
 
    ds <- access pipe slaveOk (database mc) $ rest =<<
-      find (select ["place.place_id" =: placeId] "inspections")
+      find (select ["place.place_id" =: placeId] coll_inspections_all)
          { sort = [ "inspection.date" =: (-1 :: Int) ] }
 
    liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length ds

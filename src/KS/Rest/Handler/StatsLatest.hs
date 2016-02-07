@@ -15,7 +15,8 @@ import           Servant ( ServantErr )
 import           KS.Rest.APIKey ( akRead )
 import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
 import           KS.Rest.Log ( infoM, lineM, lname )
-import           KS.Rest.Util ( requiredParam, verifyAPIKey )
+import           KS.Rest.Util
+                  ( coll_stats_recent, requiredParam, verifyAPIKey )
 
 
 handler
@@ -39,7 +40,7 @@ handler conf pipe mbKey mbSources = do
          [ "doctype" =: ("regional_stats" :: T.Text)
          , "source" =: [ "$in" =: sources ]
          ]
-         "regional_data"
+         coll_stats_recent
          )
 
    return $ map (Object . toAeson) ds
