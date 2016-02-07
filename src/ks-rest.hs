@@ -28,10 +28,11 @@ import qualified KS.Data.Document as D
 import qualified KS.Rest.Handler.InspAllName
 import qualified KS.Rest.Handler.InspAllPlaceIDCap
 import qualified KS.Rest.Handler.InspRecentNear
+import qualified KS.Rest.Handler.InspRecentPlaceID
 import qualified KS.Rest.Handler.InspSorted
 import qualified KS.Rest.Handler.StatsLatest
 import qualified KS.Rest.Handler.Version
-import           KS.Rest.Types ( ByLocResults (..) )
+import           KS.Rest.Types ( ByLocResults (..), PlaceIDs (..) )
 import           KS.Rest.Util ( coll_inspections_all, coll_inspections_recent )
 import           KS.Rest.Log ( initLogging, lineM, lname, noticeM )
 
@@ -79,17 +80,18 @@ type KSAPI
          QueryParam "sort"    T.Text :>
          Get '[JSON] [D.Document]
 
-   {-
    -- favorites
-   :<|>  APIVer :> "inspections" :> "recent" :> "placeid" :> Capture "placeid"
+   :<|>  APIVer :> "inspections" :> "recent" :> "placeid" :> Capture "placeid" T.Text :>
          QueryParam "key"     String :>
+         QueryParam "after"   Int :>
          Get '[JSON] [D.Document]
 
-   :<|>  APIVer :> "inspections" :> "recent" :> "placeid"
+   -- favorites
+   :<|>  APIVer :> "inspections" :> "recent" :> "placeid" :>
          QueryParam "key"     String :>
+         QueryParam "after"   Int :>
          ReqBody '[JSON] PlaceIDs :>
          Post '[JSON] [D.Document]
-   -}
 
    :<|>  APIVer :> "stats" :> "latest" :> "by_source" :>
          QueryParam "key"     String :>
@@ -107,6 +109,8 @@ server conf pipe
    :<|>  KS.Rest.Handler.InspAllPlaceIDCap.handler conf pipe
    :<|>  KS.Rest.Handler.InspSorted.handler conf pipe coll_inspections_recent
    :<|>  KS.Rest.Handler.InspSorted.handler conf pipe coll_inspections_all
+   :<|>  KS.Rest.Handler.InspRecentPlaceID.handlerCapture conf pipe
+   :<|>  KS.Rest.Handler.InspRecentPlaceID.handlerPost conf pipe
    :<|>  KS.Rest.Handler.StatsLatest.handler conf pipe
    :<|>  KS.Rest.Handler.Version.handler
 
@@ -225,6 +229,20 @@ instance ToCapture (Capture "placeid" T.Text) where
    toCapture _ = DocCapture
       "placeid"                           -- name
       "Google Places ID to return"        -- description
+
+
+instance ToParam (QueryParam "after" Int) where
+   toParam _ = DocQueryParam
+      "after"                                               -- name
+      ["1453166568", "230143443"]                           -- example values
+      "A date before which we can filter out inspections"   -- description
+      Normal
+
+instance ToSample PlaceIDs PlaceIDs where
+   toSample _ = Just $ PlaceIDs
+      [ "ChIJT6iXT3JfrIkRIga2syiYuGM"
+      , "ChIJwe_MrOP3rIkRkzWAFA26Kt8"
+      ]
 
 -- FIXME This goes away when we redesign stats
 instance ToParam (QueryParam "sources" T.Text) where
