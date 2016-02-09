@@ -235,7 +235,7 @@ instance ToParam (QueryParam "after" Int) where
    toParam _ = DocQueryParam
       "after"                                               -- name
       ["1453166568", "230143443"]                           -- example values
-      "A date before which we can filter out inspections"   -- description
+      "A date before which we can filter out inspections. Defaults to 0 (January 1st, 1970)"
       Normal
 
 instance ToSample PlaceIDs PlaceIDs where
