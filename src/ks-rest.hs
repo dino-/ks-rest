@@ -37,7 +37,7 @@ import           KS.Rest.Util ( coll_inspections_all, coll_inspections_recent )
 import           KS.Rest.Log ( initLogging, lineM, lname, noticeM )
 
 
-type APIVer = "v1.0"
+type APIVer = "v1.1"
 
 type KSAPI
    -- search, by loc
@@ -93,9 +93,18 @@ type KSAPI
          ReqBody '[JSON] PlaceIDs :>
          Post '[JSON] [D.Document]
 
+   -- old stats call
    :<|>  APIVer :> "stats" :> "latest" :> "by_source" :>
          QueryParam "key"     String :>
          QueryParam "sources" T.Text :>
+         Get '[JSON] [Value]
+
+   -- new stats call
+   :<|>  APIVer :> "stats" :> "recent" :> "near" :>
+         QueryParam "key"     String :>
+         QueryParam "lat"     Double :>
+         QueryParam "lng"     Double :>
+         QueryParam "dist"    Double :>
          Get '[JSON] [Value]
 
    :<|>  APIVer :> "version" :>
@@ -111,7 +120,8 @@ server conf pipe
    :<|>  KS.Rest.Handler.InspSorted.handler conf pipe coll_inspections_all
    :<|>  KS.Rest.Handler.InspRecentPlaceID.handlerCapture conf pipe
    :<|>  KS.Rest.Handler.InspRecentPlaceID.handlerPost conf pipe
-   :<|>  KS.Rest.Handler.StatsLatest.handler conf pipe
+   :<|>  KS.Rest.Handler.StatsLatest.handlerBySource conf pipe
+   :<|>  KS.Rest.Handler.StatsLatest.handlerRecentNear conf pipe
    :<|>  KS.Rest.Handler.Version.handler
 
 

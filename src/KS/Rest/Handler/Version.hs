@@ -19,7 +19,7 @@ ksRestServerVersion, ksRestAPIVersion :: String
 -- This comes from the .cabal file
 ksRestServerVersion = showVersion version
 
-ksRestAPIVersion = "1.0"
+ksRestAPIVersion = "1.1"
 
 
 handler :: EitherT ServantErr IO Value
