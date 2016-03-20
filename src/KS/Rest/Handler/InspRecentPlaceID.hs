@@ -25,7 +25,7 @@ import           KS.Rest.Util ( coll_inspections_recent, requiredParam, verifyAP
 
 
 defaultDateAfter :: Int
-defaultDateAfter = 0
+defaultDateAfter = 19700101
 
 
 handlerCapture :: Config -> Pipe -> T.Text -> Maybe String -> Maybe Int

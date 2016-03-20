@@ -1,7 +1,7 @@
 #! /bin/bash
 
 apiKey=$(<$HOME/.config/ksnitch/test-apikey)
-after=1454648400
+after=20160205
 listOfPlaceIDs='[ "ChIJtQic3uZXrIkRxIFU0wH2WWM", "ChIJeR_O8EdYrIkRWA_OTPH4PCk" ]'
 
 curl \
