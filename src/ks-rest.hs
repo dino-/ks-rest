@@ -210,8 +210,8 @@ instance ToParam (QueryParam "lng" Double) where
 instance ToParam (QueryParam "dist" Double) where
    toParam _ = DocQueryParam
       "dist"                              -- name
-      ["2000"]                            -- example values
-      ("Distance in meters for location search. This is a value in meters.")
+      ["2000", "80000"]                   -- example values
+      ("Distance in meters for location-based searches")
       Normal
 
 instance ToParam (QueryParam "min_score" Double) where
