@@ -27,9 +27,9 @@ import           KS.Rest.Log ( infoM, lname, noticeM )
 
 
 coll_inspections_all, coll_inspections_recent, coll_stats_recent :: Collection
-coll_inspections_all    = "inspections"
-coll_inspections_recent = "recent_inspections"
-coll_stats_recent       = "regional_data"
+coll_inspections_all    = "inspections_all"
+coll_inspections_recent = "inspections_recent"
+coll_stats_recent       = "stats_recent"
 
 
 {- Attempt to extract the a from a parameter (Maybe a) value and
