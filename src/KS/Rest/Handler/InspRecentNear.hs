@@ -5,20 +5,20 @@ module KS.Rest.Handler.InspRecentNear
    ( defaultMinScore, handler )
    where
 
-import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Except ( ExceptT )
-import           Data.Aeson ( Value (Object) )
-import           Data.Aeson.Bson ( toAeson )
+import Control.Monad.Trans ( liftIO )
+import Control.Monad.Trans.Except ( ExceptT )
+import Data.Aeson ( Value (Object) )
+import Data.Aeson.Bson ( toAeson )
 import qualified Data.Text as T
-import           Database.MongoDB hiding ( Value, options )
-import           Servant ( ServantErr )
-import           Text.Printf ( printf )
+import Database.MongoDB hiding ( Value, options )
+import Servant ( ServantErr )
+import Text.Printf ( printf )
 
-import           KS.Rest.APIKey ( akRead )
-import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
-import           KS.Rest.Log ( infoM, lineM, lname )
-import           KS.Rest.Types ( ByLocResults (..) )
-import           KS.Rest.Util ( coll_inspections_recent, requiredParam, verifyAPIKey )
+import KS.Rest.APIKey ( akRead )
+import KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
+import KS.Rest.Log ( infoM, lineM, lname )
+import KS.Rest.Types ( ByLocResults (..) )
+import KS.Rest.Util ( coll_inspections_recent, requiredParam, verifyAPIKey )
 
 
 defaultMinScore :: Double
