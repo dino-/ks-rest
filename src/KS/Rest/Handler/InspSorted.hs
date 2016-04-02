@@ -6,7 +6,7 @@ module KS.Rest.Handler.InspSorted
    where
 
 import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Either ( EitherT, left )
+import           Control.Monad.Trans.Except ( ExceptT, throwE )
 import           Data.Bson.Generic ( fromBSON )
 import qualified Data.ByteString.Lazy.Char8 as C
 import           Data.Maybe ( catMaybes )
@@ -33,7 +33,7 @@ handler
    :: Config -> Pipe -> Collection
    -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double
    -> Maybe Limit -> Maybe T.Text
-   -> EitherT ServantErr IO [D.Document]
+   -> ExceptT ServantErr IO [D.Document]
 handler
    conf pipe collection
    mbKey mbLat mbLng mbDist
@@ -93,17 +93,17 @@ metersToEarthRadians m = (mToKm m) / kmPerEarthRadian
       -- milesPerEarthRadian = 3963.2
 
 
-parseSortParam :: T.Text -> EitherT ServantErr IO Order
+parseSortParam :: T.Text -> ExceptT ServantErr IO Order
 parseSortParam paramValue = do
    ordering <- convertOrdering $ T.take 1 paramValue
    field <- verifyField $ T.drop 1 paramValue
    return $ [ (T.concat ["inspection.", field]) =: ordering ]
 
    where
-      convertOrdering :: T.Text -> EitherT ServantErr IO Int
+      convertOrdering :: T.Text -> ExceptT ServantErr IO Int
       convertOrdering "+" = return 1
       convertOrdering "-" = return (-1)
-      convertOrdering o   = left $ err400 { errBody = C.concat
+      convertOrdering o   = throwE $ err400 { errBody = C.concat
          [ "Cannot parse sort parameter because we got sort ordering '"
          , (C.pack . T.unpack $ o)
          , "' but expected '+' or '-'"
@@ -112,10 +112,10 @@ parseSortParam paramValue = do
       validSortFields :: [T.Text]
       validSortFields = ["date", "score"]
 
-      verifyField :: T.Text -> EitherT ServantErr IO T.Text
+      verifyField :: T.Text -> ExceptT ServantErr IO T.Text
       verifyField field
          | field `elem` validSortFields = return field
-         | otherwise = left $ err400 { errBody = C.concat
+         | otherwise = throwE $ err400 { errBody = C.concat
             [ "Cannot parse sort parameter because we got sort field '"
             , (C.pack . T.unpack $ field)
             , "' but expected one of "

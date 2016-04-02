@@ -8,7 +8,7 @@ module KS.Rest.Handler.InspRecentPlaceID
    where
 
 import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Either ( EitherT )
+import           Control.Monad.Trans.Except ( ExceptT )
 import           Data.Bson.Generic ( fromBSON )
 import           Data.Maybe ( catMaybes )
 import qualified Data.Text as T
@@ -29,14 +29,14 @@ defaultDateAfter = 19700101
 
 
 handlerCapture :: Config -> Pipe -> T.Text -> Maybe String -> Maybe Int
-   -> EitherT ServantErr IO [D.Document]
+   -> ExceptT ServantErr IO [D.Document]
 handlerCapture conf pipe placeID mbKey mbAfter =
    handlerPost conf pipe mbKey mbAfter (PlaceIDs [placeID])
 
 
 handlerPost :: Config -> Pipe -> Maybe String -> Maybe Int
    -> PlaceIDs
-   -> EitherT ServantErr IO [D.Document]
+   -> ExceptT ServantErr IO [D.Document]
 handlerPost conf pipe mbKey mbAfter (PlaceIDs placeIDs) = do
    liftIO $ lineM
 

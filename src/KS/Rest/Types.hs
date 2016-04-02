@@ -17,6 +17,12 @@ newtype ByLocResults = ByLocResults [Value]
 instance ToJSON ByLocResults
 
 
+newtype StatsResults = StatsResults [Value]
+   deriving Generic
+
+instance ToJSON StatsResults
+
+
 newtype PlaceIDs = PlaceIDs [T.Text]
    deriving (Generic, Show)
 

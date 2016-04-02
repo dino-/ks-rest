@@ -6,7 +6,7 @@ module KS.Rest.Handler.InspRecentNear
    where
 
 import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Either ( EitherT )
+import           Control.Monad.Trans.Except ( ExceptT )
 import           Data.Aeson ( Value (Object) )
 import           Data.Aeson.Bson ( toAeson )
 import qualified Data.Text as T
@@ -28,7 +28,7 @@ defaultMinScore = 0.0
 handler
    :: Config -> Pipe
    -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double -> Maybe Double
-   -> EitherT ServantErr IO ByLocResults
+   -> ExceptT ServantErr IO ByLocResults
 handler conf pipe mbKey mbLat mbLng mbDist mbMinScore = do
    liftIO $ lineM
 

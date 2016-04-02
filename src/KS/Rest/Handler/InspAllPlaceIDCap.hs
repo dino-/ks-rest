@@ -5,7 +5,7 @@ module KS.Rest.Handler.InspAllPlaceIDCap ( handler )
    where
 
 import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Either ( EitherT )
+import           Control.Monad.Trans.Except ( ExceptT )
 import           Data.Bson.Generic ( fromBSON )
 import           Data.Maybe ( catMaybes )
 import qualified Data.Text as T
@@ -21,7 +21,7 @@ import           KS.Rest.Util ( coll_inspections_all, requiredParam, verifyAPIKe
 
 
 handler :: Config -> Pipe -> T.Text -> Maybe String
-   -> EitherT ServantErr IO [D.Document]
+   -> ExceptT ServantErr IO [D.Document]
 handler conf pipe placeId mbKey = do
    liftIO $ lineM
 

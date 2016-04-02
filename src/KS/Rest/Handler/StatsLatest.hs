@@ -8,7 +8,7 @@ module KS.Rest.Handler.StatsLatest
    where
 
 import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Either ( EitherT )
+import           Control.Monad.Trans.Except ( ExceptT )
 import           Data.Aeson ( Value (Object) )
 import           Data.Aeson.Bson ( toAeson )
 import qualified Data.Text as T
@@ -19,6 +19,7 @@ import           Text.Printf ( printf )
 import           KS.Rest.APIKey ( akRead )
 import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
 import           KS.Rest.Log ( infoM, lineM, lname )
+import KS.Rest.Types ( StatsResults (..) )
 import           KS.Rest.Util
                   ( coll_stats_recent, requiredParam, verifyAPIKey )
 
@@ -26,7 +27,7 @@ import           KS.Rest.Util
 handlerBySource
    :: Config -> Pipe
    -> Maybe String -> Maybe T.Text
-   -> EitherT ServantErr IO [Value]
+   -> ExceptT ServantErr IO StatsResults
 handlerBySource conf pipe mbKey mbSources = do
    liftIO $ lineM
 
@@ -47,13 +48,13 @@ handlerBySource conf pipe mbKey mbSources = do
          coll_stats_recent
          )
 
-   return $ map (Object . toAeson) ds
+   return $ StatsResults $ map (Object . toAeson) ds
 
 
 handlerRecentNear
    :: Config -> Pipe
    -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double
-   -> EitherT ServantErr IO [Value]
+   -> ExceptT ServantErr IO StatsResults
 handlerRecentNear conf pipe mbKey mbLat mbLng mbDist = do
    liftIO $ lineM
 
@@ -87,4 +88,4 @@ handlerRecentNear conf pipe mbKey mbLat mbLng mbDist = do
 
    -- A list of the stats documents that were retrieved
    --    [ { _id: ... }, ... ]
-   return $ map (Object . toAeson . ("obj" `at`)) bsonDocs
+   return $ StatsResults $ map (Object . toAeson . ("obj" `at`)) bsonDocs
