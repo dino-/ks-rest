@@ -60,10 +60,10 @@ handlerRecentNear conf pipe mbKey mbLat mbLng mbDist = do
 
    let mc = mongoConf conf
 
-   _              <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
-   lat            <- requiredParam "lat" mbLat
-   lng            <- requiredParam "lng" mbLng
-   dist           <- requiredParam "dist" mbDist
+   _     <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
+   lat   <- requiredParam "lat" mbLat
+   lng   <- requiredParam "lng" mbLng
+   dist  <- requiredParam "dist" mbDist
 
    liftIO $ infoM lname
       $ printf "stats recent near received, lat: %f, lng %f, dist: %f"
@@ -78,7 +78,6 @@ handlerRecentNear conf pipe mbKey mbLat mbLng mbDist = do
       , "spherical" =: True
       , "limit" =: (5000 :: Int)  -- FIXME Do we need this?
       , "maxDistance" =: dist
-      -- , "query" =: [ "inspection.score" =: [ "$gte" =: minScore ] ]
       ])
 
    -- Stripping off the stats portion
