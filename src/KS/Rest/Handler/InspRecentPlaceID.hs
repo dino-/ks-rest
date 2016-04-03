@@ -11,6 +11,7 @@ import           Control.Monad.Trans ( liftIO )
 import           Control.Monad.Trans.Except ( ExceptT )
 import           Data.Bson.Generic ( fromBSON )
 import           Data.Maybe ( catMaybes )
+import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import           Database.MongoDB hiding ( options )
 import           Servant ( ServantErr )
@@ -28,16 +29,16 @@ defaultDateAfter :: Int
 defaultDateAfter = 19700101
 
 
-handlerCapture :: Config -> Pipe -> T.Text -> Maybe String -> Maybe Int
+handlerCapture :: Config -> Pool Pipe -> T.Text -> Maybe String -> Maybe Int
    -> ExceptT ServantErr IO [D.Document]
-handlerCapture conf pipe placeID mbKey mbAfter =
-   handlerPost conf pipe mbKey mbAfter (PlaceIDs [placeID])
+handlerCapture conf pool placeID mbKey mbAfter =
+   handlerPost conf pool mbKey mbAfter (PlaceIDs [placeID])
 
 
-handlerPost :: Config -> Pipe -> Maybe String -> Maybe Int
+handlerPost :: Config -> Pool Pipe -> Maybe String -> Maybe Int
    -> PlaceIDs
    -> ExceptT ServantErr IO [D.Document]
-handlerPost conf pipe mbKey mbAfter (PlaceIDs placeIDs) = do
+handlerPost conf pool mbKey mbAfter (PlaceIDs placeIDs) = do
    liftIO $ lineM
 
    _ <- requiredParam "key" mbKey >>= verifyAPIKey conf akRead
@@ -47,12 +48,14 @@ handlerPost conf pipe mbKey mbAfter (PlaceIDs placeIDs) = do
       "by_placeid received, dateAfter %d, placeids: %s"
       dateAfter (show placeIDs)
 
-   ds <- access pipe slaveOk (database . mongoConf $ conf) $ rest =<<
-      find (select
-         [ "place.place_id" =: [ "$in" =: placeIDs ]
-         , "inspection.date" =: [ "$gte" =: dateAfter ]
-         ] coll_inspections_recent)
-         { sort = [ "inspection.date" =: (-1 :: Int) ] }
+   ds <- withResource pool (\pipe ->
+      access pipe slaveOk (database . mongoConf $ conf) $ rest =<<
+         find (select
+            [ "place.place_id" =: [ "$in" =: placeIDs ]
+            , "inspection.date" =: [ "$gte" =: dateAfter ]
+            ] coll_inspections_recent)
+            { sort = [ "inspection.date" =: (-1 :: Int) ] }
+      )
 
    liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length ds
 

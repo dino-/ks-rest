@@ -8,6 +8,7 @@ import           Control.Monad.Trans ( liftIO )
 import           Control.Monad.Trans.Except ( ExceptT )
 import           Data.Bson.Generic ( fromBSON )
 import           Data.Maybe ( catMaybes )
+import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import           Database.MongoDB hiding ( options )
 import           Servant ( ServantErr )
@@ -20,9 +21,9 @@ import           KS.Rest.Log ( infoM, lineM, lname )
 import           KS.Rest.Util ( coll_inspections_all, requiredParam, verifyAPIKey )
 
 
-handler :: Config -> Pipe -> T.Text -> Maybe String
+handler :: Config -> Pool Pipe -> T.Text -> Maybe String
    -> ExceptT ServantErr IO [D.Document]
-handler conf pipe placeId mbKey = do
+handler conf pool placeId mbKey = do
    liftIO $ lineM
 
    let mc = mongoConf conf
@@ -31,9 +32,11 @@ handler conf pipe placeId mbKey = do
 
    liftIO $ infoM lname $ "by_placeid received, placeid: " ++ (T.unpack placeId)
 
-   ds <- access pipe slaveOk (database mc) $ rest =<<
-      find (select ["place.place_id" =: placeId] coll_inspections_all)
-         { sort = [ "inspection.date" =: (-1 :: Int) ] }
+   ds <- withResource pool (\pipe ->
+      access pipe slaveOk (database mc) $ rest =<<
+         find (select ["place.place_id" =: placeId] coll_inspections_all)
+            { sort = [ "inspection.date" =: (-1 :: Int) ] }
+      )
 
    liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length ds
 

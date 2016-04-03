@@ -38,6 +38,7 @@ executable ks-rest
         ks-library >=1.8,
         mongoDB <=2.0.8,
         mtl >=2.2.1 && <2.3,
+        resource-pool >=0.2.3.2 && <0.3,
         servant-docs ==0.5.*,
         servant-server ==0.5.*,
         tce-conf ==1.1.*,

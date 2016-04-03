@@ -11,6 +11,7 @@ import           Control.Monad.Trans ( liftIO )
 import           Control.Monad.Trans.Except ( ExceptT )
 import           Data.Aeson ( Value (Object) )
 import           Data.Aeson.Bson ( toAeson )
+import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import           Database.MongoDB hiding ( Value, options )
 import           Servant ( ServantErr )
@@ -25,10 +26,10 @@ import           KS.Rest.Util
 
 
 handlerBySource
-   :: Config -> Pipe
+   :: Config -> Pool Pipe
    -> Maybe String -> Maybe T.Text
    -> ExceptT ServantErr IO StatsResults
-handlerBySource conf pipe mbKey mbSources = do
+handlerBySource conf pool mbKey mbSources = do
    liftIO $ lineM
 
    let mc = mongoConf conf
@@ -40,22 +41,24 @@ handlerBySource conf pipe mbKey mbSources = do
       $ "stats latest by_source received, sources: "
       ++ (show sources)
 
-   ds <- access pipe slaveOk (database mc) $ rest =<<
-      find ( select
-         [ "doctype" =: ("regional_stats" :: T.Text)
-         , "source" =: [ "$in" =: sources ]
-         ]
-         coll_stats_recent
-         )
+   ds <- withResource pool (\pipe ->
+      access pipe slaveOk (database mc) $ rest =<<
+         find ( select
+            [ "doctype" =: ("regional_stats" :: T.Text)
+            , "source" =: [ "$in" =: sources ]
+            ]
+            coll_stats_recent
+            )
+      )
 
    return $ StatsResults $ map (Object . toAeson) ds
 
 
 handlerRecentNear
-   :: Config -> Pipe
+   :: Config -> Pool Pipe
    -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double
    -> ExceptT ServantErr IO StatsResults
-handlerRecentNear conf pipe mbKey mbLat mbLng mbDist = do
+handlerRecentNear conf pool mbKey mbLat mbLng mbDist = do
    liftIO $ lineM
 
    let mc = mongoConf conf
@@ -69,16 +72,18 @@ handlerRecentNear conf pipe mbKey mbLat mbLng mbDist = do
       $ printf "stats recent near received, lat: %f, lng %f, dist: %f"
       lat lng dist
 
-   r <- access pipe slaveOk (database mc) $ runCommand (
-      [ "geoNear" =: coll_stats_recent
-      , "near" =:
-         [ "type" =: ("Point" :: T.Text)
-         , "coordinates" =: [ lng, lat ]
-         ]
-      , "spherical" =: True
-      , "limit" =: (5000 :: Int)  -- FIXME Do we need this?
-      , "maxDistance" =: dist
-      ])
+   r <- withResource pool (\pipe ->
+      access pipe slaveOk (database mc) $ runCommand (
+         [ "geoNear" =: coll_stats_recent
+         , "near" =:
+            [ "type" =: ("Point" :: T.Text)
+            , "coordinates" =: [ lng, lat ]
+            ]
+         , "spherical" =: True
+         , "limit" =: (5000 :: Int)  -- FIXME Do we need this?
+         , "maxDistance" =: dist
+         ])
+      )
 
    -- Stripping off the stats portion
    let bsonDocs = ("results" `at` r) :: [Document]

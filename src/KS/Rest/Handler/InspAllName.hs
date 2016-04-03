@@ -8,6 +8,7 @@ import           Control.Monad.Trans ( liftIO )
 import           Control.Monad.Trans.Except ( ExceptT )
 import           Data.Bson.Generic ( fromBSON )
 import           Data.Maybe ( catMaybes )
+import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import           Database.MongoDB hiding ( options )
 import           Servant ( ServantErr )
@@ -19,9 +20,9 @@ import           KS.Rest.Log ( infoM, lineM, lname )
 import           KS.Rest.Util ( coll_inspections_all, requiredParam, verifyAPIKey )
 
 
-handler :: Config -> Pipe -> Maybe String -> Maybe T.Text
+handler :: Config -> Pool Pipe -> Maybe String -> Maybe T.Text
    -> ExceptT ServantErr IO [D.Document]
-handler conf pipe mbKey mbRegex = do
+handler conf pool mbKey mbRegex = do
    liftIO $ lineM
 
    let mc = mongoConf conf
@@ -32,8 +33,10 @@ handler conf pipe mbKey mbRegex = do
    liftIO $ infoM lname $ "by_name received, regex: " ++ (T.unpack regex')
 
    -- ds :: [Data.Bson.Document]
-   ds <- access pipe slaveOk (database mc) $ rest =<<
-      find (select ["place.name" =: Regex (regex' :: T.Text) "i"]
-         coll_inspections_all)
+   ds <- withResource pool (\pipe ->
+      access pipe slaveOk (database mc) $ rest =<<
+         find (select ["place.name" =: Regex (regex' :: T.Text) "i"]
+            coll_inspections_all)
+      )
 
    return $ catMaybes . map fromBSON $ ds

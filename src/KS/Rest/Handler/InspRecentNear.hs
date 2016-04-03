@@ -9,6 +9,7 @@ import Control.Monad.Trans ( liftIO )
 import Control.Monad.Trans.Except ( ExceptT )
 import Data.Aeson ( Value (Object) )
 import Data.Aeson.Bson ( toAeson )
+import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import Database.MongoDB hiding ( Value, options )
 import Servant ( ServantErr )
@@ -26,10 +27,10 @@ defaultMinScore = 0.0
 
 
 handler
-   :: Config -> Pipe
+   :: Config -> Pool Pipe
    -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double -> Maybe Double
    -> ExceptT ServantErr IO ByLocResults
-handler conf pipe mbKey mbLat mbLng mbDist mbMinScore = do
+handler conf pool mbKey mbLat mbLng mbDist mbMinScore = do
    liftIO $ lineM
 
    let mc = mongoConf conf
@@ -44,17 +45,19 @@ handler conf pipe mbKey mbLat mbLng mbDist mbMinScore = do
       $ printf "search by loc received, lat: %f, lng %f, dist: %f, min_score: %f"
       lat lng dist minScore
 
-   r <- access pipe slaveOk (database mc) $ runCommand (
-      [ "geoNear" =: coll_inspections_recent
-      , "near" =:
-         [ "type" =: ("Point" :: T.Text)
-         , "coordinates" =: [ lng, lat ]
-         ]
-      , "spherical" =: True
-      , "limit" =: (5000 :: Int)  -- FIXME Do we need this?
-      , "maxDistance" =: dist
-      , "query" =: [ "inspection.score" =: [ "$gte" =: minScore ] ]
-      ])
+   r <- withResource pool (\pipe ->
+      access pipe slaveOk (database mc) $ runCommand (
+         [ "geoNear" =: coll_inspections_recent
+         , "near" =:
+            [ "type" =: ("Point" :: T.Text)
+            , "coordinates" =: [ lng, lat ]
+            ]
+         , "spherical" =: True
+         , "limit" =: (5000 :: Int)  -- FIXME Do we need this?
+         , "maxDistance" =: dist
+         , "query" =: [ "inspection.score" =: [ "$gte" =: minScore ] ]
+         ])
+      )
 
    -- Stripping off the stats portion
    let bsonDocs = ("results" `at` r) :: [Document]

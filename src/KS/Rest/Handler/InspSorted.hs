@@ -10,6 +10,7 @@ import           Control.Monad.Trans.Except ( ExceptT, throwE )
 import           Data.Bson.Generic ( fromBSON )
 import qualified Data.ByteString.Lazy.Char8 as C
 import           Data.Maybe ( catMaybes )
+import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import           Database.MongoDB hiding ( Value, options )
 import           Servant
@@ -30,12 +31,12 @@ defaultLimit = 100
 
 
 handler
-   :: Config -> Pipe -> Collection
+   :: Config -> Pool Pipe -> Collection
    -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double
    -> Maybe Limit -> Maybe T.Text
    -> ExceptT ServantErr IO [D.Document]
 handler
-   conf pipe collection
+   conf pool collection
    mbKey mbLat mbLng mbDist
    mbLimit mbSort = do
 
@@ -54,19 +55,21 @@ handler
       $ printf "%s search received, lat: %f, lng: %f, dist: (%s), limit: %d, sort: %s"
       (show collection) lat lng (show mbDist) (limit' :: Limit) (show sort')
 
-   ds <- access pipe slaveOk (database mc) $ do
-      rest =<< find ( select
-         [ "place.location" =:
-            [ "$geoWithin" =:
-               [ "$centerSphere" =: Array
-                  [ Array [Float lng, Float lat]
-                  , Float dist
+   ds <- withResource pool (\pipe ->
+      access pipe slaveOk (database mc) $ do
+         rest =<< find ( select
+            [ "place.location" =:
+               [ "$geoWithin" =:
+                  [ "$centerSphere" =: Array
+                     [ Array [Float lng, Float lat]
+                     , Float dist
+                     ]
                   ]
                ]
-            ]
-         --, "blah.date" =: ???
-         ] collection
-         ) { sort = sort' , limit = limit' }
+            --, "blah.date" =: ???
+            ] collection
+            ) { sort = sort' , limit = limit' }
+      )
 
    liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length ds
 

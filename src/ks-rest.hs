@@ -7,9 +7,11 @@
 
 import Data.Aeson ( Value, toJSON, (.=), decode, object )
 import Data.Maybe ( fromJust )
+import Data.Pool ( Pool, createPool )
 import qualified Data.Text as T
 import Data.Version ( showVersion )
-import Database.MongoDB ( Limit, Pipe, access, auth, connect, host, slaveOk )
+import Database.MongoDB ( Limit, Pipe, access, auth, close, connect, host
+   , slaveOk )
 import Network.Wai.Handler.Warp ( run )
 import Paths_ks_rest ( version )
 import Servant
@@ -110,17 +112,17 @@ type KSAPI
          Get '[JSON] Value
 
 
-server :: Config -> Pipe -> Server KSAPI
-server conf pipe
-   =     KS.Rest.Handler.InspRecentNear.handler conf pipe
-   :<|>  KS.Rest.Handler.InspAllName.handler conf pipe
-   :<|>  KS.Rest.Handler.InspAllPlaceIDCap.handler conf pipe
-   :<|>  KS.Rest.Handler.InspSorted.handler conf pipe coll_inspections_recent
-   :<|>  KS.Rest.Handler.InspSorted.handler conf pipe coll_inspections_all
-   :<|>  KS.Rest.Handler.InspRecentPlaceID.handlerCapture conf pipe
-   :<|>  KS.Rest.Handler.InspRecentPlaceID.handlerPost conf pipe
-   :<|>  KS.Rest.Handler.StatsLatest.handlerBySource conf pipe
-   :<|>  KS.Rest.Handler.StatsLatest.handlerRecentNear conf pipe
+server :: Config -> Pool Pipe -> Server KSAPI
+server conf pool
+   =     KS.Rest.Handler.InspRecentNear.handler conf pool
+   :<|>  KS.Rest.Handler.InspAllName.handler conf pool
+   :<|>  KS.Rest.Handler.InspAllPlaceIDCap.handler conf pool
+   :<|>  KS.Rest.Handler.InspSorted.handler conf pool coll_inspections_recent
+   :<|>  KS.Rest.Handler.InspSorted.handler conf pool coll_inspections_all
+   :<|>  KS.Rest.Handler.InspRecentPlaceID.handlerCapture conf pool
+   :<|>  KS.Rest.Handler.InspRecentPlaceID.handlerPost conf pool
+   :<|>  KS.Rest.Handler.StatsLatest.handlerBySource conf pool
+   :<|>  KS.Rest.Handler.StatsLatest.handlerRecentNear conf pool
    :<|>  KS.Rest.Handler.Version.handler
 
 
@@ -147,6 +149,27 @@ main = do
    noticeM lname $ printf "ks-server version %s started on port %d"
       (showVersion version) port
 
+   -- 7 days * 24 hours * 60 minutes * 60 seconds
+   let resourceLifetime = 604800
+   pool <- createPool (getMongoConnection config) close 1 resourceLifetime 20
+
+   -- 'serve' comes from servant and hands you a WAI Application,
+   -- which you can think of as an 'abstract' web application,
+   -- not yet a webserver.
+   -- app :: Application
+   let app = logger $ serve ksAPI (server config pool)
+
+   run port app
+
+   {- These never execute, is that bad? Consider catching the ctrl-c..
+
+   putStrLn "Server shutting down..."
+   destroyAllResources pool
+   -}
+
+
+getMongoConnection :: Config -> IO Pipe
+getMongoConnection config = do
    let mc = mongoConf config
 
    pipe <- connect . host . ip $ mc
@@ -155,19 +178,7 @@ main = do
       $ auth (username mc) (password mc)) >>=
       \tf -> noticeM lname $ "Authenticated with Mongo: " ++ (show tf)
 
-   -- 'serve' comes from servant and hands you a WAI Application,
-   -- which you can think of as an 'abstract' web application,
-   -- not yet a webserver.
-   -- app :: Application
-   let app = logger $ serve ksAPI (server config pipe)
-
-   run port app
-
-   {- These never execute, is that bad? Consider catching the ctrl-c..
-
-   putStrLn "Server shutting down..."
-   close pipe
-   -}
+   return pipe
 
 
 parseArgs :: IO String
