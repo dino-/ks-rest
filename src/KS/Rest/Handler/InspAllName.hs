@@ -12,6 +12,7 @@ import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import Database.MongoDB hiding ( options )
 import Servant ( ServantErr )
+import Text.Printf ( printf )
 
 import qualified KS.Data.Document as D
 import KS.Rest.APIKey ( akRead )
@@ -38,5 +39,7 @@ handler conf pool mbKey mbRegex = do
          find (select ["place.name" =: Regex (regex' :: T.Text) "i"]
             coll_inspections_all)
       )
+
+   liftIO $ infoM lname $ printf "Retrieved %d inspections" $ length ds
 
    return $ catMaybes . map fromBSON $ ds
