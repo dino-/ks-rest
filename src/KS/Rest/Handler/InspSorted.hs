@@ -5,25 +5,25 @@ module KS.Rest.Handler.InspSorted
    ( defaultLimit, handler )
    where
 
-import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Except ( ExceptT, throwE )
-import           Data.Bson.Generic ( fromBSON )
+import Control.Monad.Trans ( liftIO )
+import Control.Monad.Trans.Except ( ExceptT, throwE )
+import Data.Bson.Generic ( fromBSON )
 import qualified Data.ByteString.Lazy.Char8 as C
-import           Data.Maybe ( catMaybes )
+import Data.Maybe ( catMaybes )
 import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
-import           Database.MongoDB hiding ( Value, options )
-import           Servant
+import Database.MongoDB hiding ( Value, options )
+import Servant
                   ( ServantErr (errBody)
                   , err400
                   )
-import           Text.Printf ( printf )
+import Text.Printf ( printf )
 
 import qualified KS.Data.Document as D
-import           KS.Rest.APIKey ( akRead )
-import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
-import           KS.Rest.Log ( infoM, lineM, lname )
-import           KS.Rest.Util ( requiredParam, verifyAPIKey )
+import KS.Rest.APIKey ( akRead )
+import KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
+import KS.Rest.Log ( infoM, lineM, lname )
+import KS.Rest.Util ( requiredParam, verifyAPIKey )
 
 
 defaultLimit :: Limit

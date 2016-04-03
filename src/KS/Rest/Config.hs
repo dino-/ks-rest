@@ -9,11 +9,11 @@ module KS.Rest.Config
    where
 
 import qualified Data.Text as T
-import           System.FilePath ( (</>) )
-import           System.Log ( Priority )
-import           TCE.Data.ReadConf ( readConfig )
+import System.FilePath ( (</>) )
+import System.Log ( Priority )
+import TCE.Data.ReadConf ( readConfig )
 
-import           KS.Rest.APIKey ( APIKeys )
+import KS.Rest.APIKey ( APIKeys )
 
 
 data Config = Config

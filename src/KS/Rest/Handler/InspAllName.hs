@@ -4,20 +4,20 @@
 module KS.Rest.Handler.InspAllName ( handler )
    where
 
-import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Except ( ExceptT )
-import           Data.Bson.Generic ( fromBSON )
-import           Data.Maybe ( catMaybes )
+import Control.Monad.Trans ( liftIO )
+import Control.Monad.Trans.Except ( ExceptT )
+import Data.Bson.Generic ( fromBSON )
+import Data.Maybe ( catMaybes )
 import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
-import           Database.MongoDB hiding ( options )
-import           Servant ( ServantErr )
+import Database.MongoDB hiding ( options )
+import Servant ( ServantErr )
 
 import qualified KS.Data.Document as D
-import           KS.Rest.APIKey ( akRead )
-import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
-import           KS.Rest.Log ( infoM, lineM, lname )
-import           KS.Rest.Util ( coll_inspections_all, requiredParam, verifyAPIKey )
+import KS.Rest.APIKey ( akRead )
+import KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
+import KS.Rest.Log ( infoM, lineM, lname )
+import KS.Rest.Util ( coll_inspections_all, requiredParam, verifyAPIKey )
 
 
 handler :: Config -> Pool Pipe -> Maybe String -> Maybe T.Text

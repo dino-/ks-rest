@@ -7,21 +7,21 @@ module KS.Rest.Handler.StatsLatest
    )
    where
 
-import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Except ( ExceptT )
-import           Data.Aeson ( Value (Object) )
-import           Data.Aeson.Bson ( toAeson )
+import Control.Monad.Trans ( liftIO )
+import Control.Monad.Trans.Except ( ExceptT )
+import Data.Aeson ( Value (Object) )
+import Data.Aeson.Bson ( toAeson )
 import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
-import           Database.MongoDB hiding ( Value, options )
-import           Servant ( ServantErr )
-import           Text.Printf ( printf )
+import Database.MongoDB hiding ( Value, options )
+import Servant ( ServantErr )
+import Text.Printf ( printf )
 
-import           KS.Rest.APIKey ( akRead )
-import           KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
-import           KS.Rest.Log ( infoM, lineM, lname )
+import KS.Rest.APIKey ( akRead )
+import KS.Rest.Config ( Config (mongoConf), MongoConf (database) )
+import KS.Rest.Log ( infoM, lineM, lname )
 import KS.Rest.Types ( StatsResults (..) )
-import           KS.Rest.Util
+import KS.Rest.Util
                   ( coll_stats_recent, requiredParam, verifyAPIKey )
 
 

@@ -6,9 +6,9 @@
 module KS.Rest.Types
    where
 
-import           Data.Aeson ( FromJSON, ToJSON, Value )
+import Data.Aeson ( FromJSON, ToJSON, Value )
 import qualified Data.Text as T
-import           GHC.Generics ( Generic )
+import GHC.Generics ( Generic )
 
 
 newtype ByLocResults = ByLocResults [Value]

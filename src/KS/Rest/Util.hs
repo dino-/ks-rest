@@ -9,21 +9,21 @@ module KS.Rest.Util
    )
    where
 
-import           Control.Monad.Trans ( liftIO )
-import           Control.Monad.Trans.Except ( ExceptT, throwE )
-import           Data.ByteString.Lazy.Char8 ( pack )
-import           Data.ByteString.Lazy ( ByteString, concat )
-import           Database.MongoDB ( Collection )
-import           Prelude hiding ( concat )
-import           Servant
-                  ( ServantErr (errBody)
-                  , err400    -- Bad Request
-                  , err401    -- Unauthorized
-                  )
+import Control.Monad.Trans ( liftIO )
+import Control.Monad.Trans.Except ( ExceptT, throwE )
+import Data.ByteString.Lazy.Char8 ( pack )
+import Data.ByteString.Lazy ( ByteString, concat )
+import Database.MongoDB ( Collection )
+import Prelude hiding ( concat )
+import Servant
+   ( ServantErr (errBody)
+   , err400    -- Bad Request
+   , err401    -- Unauthorized
+   )
 
 import qualified KS.Rest.APIKey as AK
-import           KS.Rest.Config ( Config (apiKeys) )
-import           KS.Rest.Log ( infoM, lname, noticeM )
+import KS.Rest.Config ( Config (apiKeys) )
+import KS.Rest.Log ( infoM, lname, noticeM )
 
 
 coll_inspections_all, coll_inspections_recent, coll_stats_recent :: Collection

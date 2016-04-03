@@ -1,16 +1,16 @@
 -- License: BSD3 (see LICENSE)
 -- Author: Dino Morelli <dino@ui3.info>
 
-import           Control.Monad ( when )
+import Control.Monad ( when )
 import qualified Data.ByteString.Lazy.Char8 as BL
-import           Data.Digest.Pure.SHA ( sha1, showDigest )
-import           Data.List ( intercalate )
-import           Data.Version ( showVersion )
-import           Paths_ks_rest ( version )
-import           Prelude hiding ( words )
-import           System.Environment ( getArgs )
+import Data.Digest.Pure.SHA ( sha1, showDigest )
+import Data.List ( intercalate )
+import Data.Version ( showVersion )
+import Paths_ks_rest ( version )
+import Prelude hiding ( words )
+import System.Environment ( getArgs )
 
-import           KS.Rest.APIKey ( APIKey (..) )
+import KS.Rest.APIKey ( APIKey (..) )
 
 
 main :: IO ()
