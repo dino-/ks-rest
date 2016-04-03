@@ -19,6 +19,8 @@ import KS.Rest.APIKey ( APIKeys )
 data Config = Config
    { webServerPort :: Int
    , mongoConf :: MongoConf
+   , resourcePoolMaxConnections :: Int
+   , resourcePoolTTL :: Int
    , logPriority :: Priority
    , logPath :: FilePath
    , apiKeys :: APIKeys
@@ -28,6 +30,7 @@ data Config = Config
 
 data MongoConf = MongoConf
    { ip :: String
+   , port :: Int
    , username :: T.Text
    , password :: T.Text
    , database :: T.Text

@@ -10,8 +10,8 @@ import Data.Maybe ( fromJust )
 import Data.Pool ( Pool, createPool )
 import qualified Data.Text as T
 import Data.Version ( showVersion )
-import Database.MongoDB ( Limit, Pipe, access, auth, close, connect, host
-   , slaveOk )
+import Database.MongoDB ( Host (..), Limit, Pipe, PortID (PortNumber)
+   , access, auth, close, connect, slaveOk )
 import Network.Wai.Handler.Warp ( run )
 import Paths_ks_rest ( version )
 import Servant
@@ -21,8 +21,9 @@ import System.Exit ( exitSuccess )
 import Text.Printf ( printf )
 
 import KS.Rest.Config
-   ( Config ( logPath, logPriority, mongoConf, webServerPort )
-   , MongoConf ( database, ip, password, username )
+   ( Config ( logPath, logPriority, mongoConf, resourcePoolMaxConnections
+      , resourcePoolTTL, webServerPort )
+   , MongoConf ( database, ip, password, port, username )
    , loadConfig
    )
 import qualified KS.Data.Document as D
@@ -143,15 +144,15 @@ main = do
    -}
    logger <- initLogging (logPriority config) (logPath config)
 
-   let port = webServerPort config
+   let wsPort = webServerPort config
 
    lineM
    noticeM lname $ printf "ks-server version %s started on port %d"
-      (showVersion version) port
+      (showVersion version) wsPort
 
-   -- 7 days * 24 hours * 60 minutes * 60 seconds
-   let resourceLifetime = 604800
-   pool <- createPool (getMongoConnection config) close 1 resourceLifetime 20
+   pool <- createPool (getMongoConnection config) close 1
+      (fromIntegral . resourcePoolTTL $ config)
+      (resourcePoolMaxConnections config)
 
    -- 'serve' comes from servant and hands you a WAI Application,
    -- which you can think of as an 'abstract' web application,
@@ -159,7 +160,7 @@ main = do
    -- app :: Application
    let app = logger $ serve ksAPI (server config pool)
 
-   run port app
+   run wsPort app
 
    {- These never execute, is that bad? Consider catching the ctrl-c..
 
@@ -172,7 +173,8 @@ getMongoConnection :: Config -> IO Pipe
 getMongoConnection config = do
    let mc = mongoConf config
 
-   pipe <- connect . host . ip $ mc
+   let host = Host (ip mc) (PortNumber . fromIntegral . port $ mc)
+   pipe <- connect host
 
    (access pipe slaveOk (database mc)
       $ auth (username mc) (password mc)) >>=
