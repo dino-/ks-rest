@@ -5,25 +5,24 @@
     MultiParamTypeClasses, TypeFamilies, TypeOperators #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
-import           Data.Aeson ( Value, toJSON, (.=), decode, object )
-import           Data.Maybe ( fromJust )
+import Data.Aeson ( Value, toJSON, (.=), decode, object )
+import Data.Maybe ( fromJust )
 import qualified Data.Text as T
-import           Data.Version ( showVersion )
-import           Database.MongoDB ( Limit, Pipe
-                  , access, auth, connect, host, slaveOk )
-import           Network.Wai.Handler.Warp ( run )
-import           Paths_ks_rest ( version )
-import           Servant
-import           Servant.Docs
-import           System.Environment ( getArgs )
-import           System.Exit ( exitSuccess )
-import           Text.Printf ( printf )
+import Data.Version ( showVersion )
+import Database.MongoDB ( Limit, Pipe, access, auth, connect, host, slaveOk )
+import Network.Wai.Handler.Warp ( run )
+import Paths_ks_rest ( version )
+import Servant
+import Servant.Docs
+import System.Environment ( getArgs )
+import System.Exit ( exitSuccess )
+import Text.Printf ( printf )
 
-import           KS.Rest.Config
-                  ( Config ( logPath, logPriority, mongoConf, webServerPort )
-                  , MongoConf ( database, ip, password, username )
-                  , loadConfig
-                  )
+import KS.Rest.Config
+   ( Config ( logPath, logPriority, mongoConf, webServerPort )
+   , MongoConf ( database, ip, password, username )
+   , loadConfig
+   )
 import qualified KS.Data.Document as D
 import qualified KS.Rest.Handler.InspAllName
 import qualified KS.Rest.Handler.InspAllPlaceIDCap
@@ -32,9 +31,9 @@ import qualified KS.Rest.Handler.InspRecentPlaceID
 import qualified KS.Rest.Handler.InspSorted
 import qualified KS.Rest.Handler.StatsLatest
 import qualified KS.Rest.Handler.Version
-import           KS.Rest.Types ( ByLocResults (..), PlaceIDs (..), StatsResults (..) )
-import           KS.Rest.Util ( coll_inspections_all, coll_inspections_recent )
-import           KS.Rest.Log ( initLogging, lineM, lname, noticeM )
+import KS.Rest.Types ( ByLocResults (..), PlaceIDs (..), StatsResults (..) )
+import KS.Rest.Util ( coll_inspections_all, coll_inspections_recent )
+import KS.Rest.Log ( initLogging, lineM, lname, noticeM )
 
 
 type APIVer = "v1.1"
