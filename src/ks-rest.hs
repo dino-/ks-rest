@@ -40,7 +40,7 @@ import qualified KS.Rest.Handler.StatsLatest
 import qualified KS.Rest.Handler.Version
 import KS.Rest.Types ( ByLocResults (..), PlaceIDs (..), StatsResults (..) )
 import KS.Rest.Util ( coll_inspections_all, coll_inspections_recent )
-import KS.Rest.Log ( initLogging, lineM, lname, noticeM )
+import KS.Rest.Log ( infoM, initLogging, lineM, lname, noticeM )
 
 
 type APIVer = "v1.1"
@@ -178,6 +178,8 @@ main = do
 
 getMongoConnection :: Config -> IO Pipe
 getMongoConnection config = do
+   infoM lname $ "acquiring mongodb connection"
+
    let mc = mongoConf config
 
    let host = Host (ip mc) (PortNumber . fromIntegral . port $ mc)
