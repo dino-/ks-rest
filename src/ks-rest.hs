@@ -18,6 +18,10 @@ import Servant
 import Servant.Docs
 import System.Environment ( getArgs )
 import System.Exit ( exitSuccess )
+import System.IO
+   ( BufferMode ( NoBuffering )
+   , hSetBuffering, stdout, stderr
+   )
 import Text.Printf ( printf )
 
 import KS.Rest.Config
@@ -133,6 +137,9 @@ ksAPI = Proxy
 
 main :: IO ()
 main = do
+   -- No buffering, it messes with the order of output
+   mapM_ (flip hSetBuffering NoBuffering) [ stdout, stderr ]
+
    confDir <- parseArgs
 
    config <- loadConfig confDir
