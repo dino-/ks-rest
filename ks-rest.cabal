@@ -35,7 +35,7 @@ executable ks-rest
         filepath >=1.4.0.0 && <1.5,
         hslogger >=1.2.9 && <1.3,
         http-types ==0.9.*,
-        ks-library >=1.8,
+        ks-library >=1.9,
         mongoDB <=2.0.8,
         mtl >=2.2.1 && <2.3,
         resource-pool >=0.2.3.2 && <0.3,
