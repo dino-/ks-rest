@@ -50,10 +50,10 @@ instance ToBSON IssueType
 data Feedback = Feedback
    { status :: Status
    , device_id :: T.Text
-   , place_id :: T.Text
+   , place_id :: Maybe T.Text
    , date :: Int
    , issue_type :: IssueType
-   , comment :: T.Text
+   , comment :: Maybe T.Text
    }
    deriving (Eq, Generic, Show)
 
@@ -81,8 +81,8 @@ instance ToBSON Feedback where
 
 
 dummyFeedback :: Feedback
-dummyFeedback = Feedback New "somedevice" "a_google_places_id" 20160409
-   Closed "This restaurant is gone!"
+dummyFeedback = Feedback New "somedevice" Nothing 20160409
+   NoInspection (Just "Restaurant is missing!")
 
 
 handler :: Config -> Pool Pipe -> Maybe String
