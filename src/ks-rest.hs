@@ -31,6 +31,8 @@ import KS.Rest.Config
    , loadConfig
    )
 import qualified KS.Data.Document as D
+import qualified KS.Rest.Handler.Feedback
+import KS.Rest.Handler.Feedback ( Feedback (..), dummyFeedback )
 import qualified KS.Rest.Handler.InspAllName
 import qualified KS.Rest.Handler.InspAllPlaceIDCap
 import qualified KS.Rest.Handler.InspRecentNear
@@ -113,6 +115,12 @@ type KSAPI
          QueryParam "dist"    Double :>
          Get '[JSON] StatsResults
 
+   -- feedback
+   :<|>  APIVer :> "feedback" :>
+         QueryParam "key"     String :>
+         ReqBody '[JSON] Feedback :>
+         Post '[JSON] ()
+
    :<|>  APIVer :> "version" :>
          Get '[JSON] Value
 
@@ -128,6 +136,7 @@ server conf pool
    :<|>  KS.Rest.Handler.InspRecentPlaceID.handlerPost conf pool
    :<|>  KS.Rest.Handler.StatsLatest.handlerBySource conf pool
    :<|>  KS.Rest.Handler.StatsLatest.handlerRecentNear conf pool
+   :<|>  KS.Rest.Handler.Feedback.handler conf pool
    :<|>  KS.Rest.Handler.Version.handler
 
 
@@ -322,6 +331,9 @@ instance ToSample StatsResults where
          , "avg_score" .= (95.68157196044922 :: Double)
          ]
       ]
+
+instance ToSample Feedback where
+   toSamples _ = singleSample dummyFeedback
 
 instance ToSample Value where
    toSamples _ = singleSample $ object

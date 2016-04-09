@@ -2,7 +2,8 @@
 -- Author: Dino Morelli <dino@ui3.info>
 
 module KS.Rest.Util
-   ( coll_inspections_all, coll_inspections_recent
+   ( coll_feedback
+   , coll_inspections_all, coll_inspections_recent
    , coll_stats_recent
    , requiredParam
    , verifyAPIKey
@@ -26,7 +27,8 @@ import KS.Rest.Config ( Config (apiKeys) )
 import KS.Rest.Log ( infoM, lname, noticeM )
 
 
-coll_inspections_all, coll_inspections_recent, coll_stats_recent :: Collection
+coll_feedback, coll_inspections_all, coll_inspections_recent, coll_stats_recent :: Collection
+coll_feedback           = "feedback"
 coll_inspections_all    = "inspections_all"
 coll_inspections_recent = "inspections_recent"
 coll_stats_recent       = "stats_recent"
