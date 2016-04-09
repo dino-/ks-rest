@@ -15,6 +15,7 @@ import Data.Aeson ( FromJSON, ToJSON )
 import Data.Bson.Generic ( FromBSON ,ToBSON, fromBSON, toBSON )
 import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
+import Database.Mongo.Util ( lastStatus )
 import Database.MongoDB hiding ( options )
 import GHC.Generics ( Generic )
 import Servant ( ServantErr )
@@ -95,14 +96,9 @@ handler conf pool mbKey feedback = do
    liftIO $ infoM lname $ printf
       "Feedback received: %s" (show feedback)
 
-   let bson = toBSON feedback
-
-   _ <- withResource pool (\pipe ->
+   result <- withResource pool (\pipe ->
       access pipe slaveOk (database . mongoConf $ conf) $
-         save coll_feedback bson
+         save coll_feedback (toBSON feedback) >> lastStatus
       )
 
-   -- FIXME This is allegedly successful. Do some error checking.
-   liftIO $ infoM lname "Feedback successfully stored"
-
-   return ()
+   liftIO $ infoM lname $ printf "Feedback inserted, result: %s" $ either id id result
