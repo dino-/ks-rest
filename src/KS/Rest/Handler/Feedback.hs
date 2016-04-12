@@ -37,7 +37,8 @@ instance FromBSON Status
 instance ToBSON Status
 
 
-data IssueType = NoInspection | WrongNameAddr | Closed | Other
+data IssueType
+   = Closed | WrongNameAddr | InspectionNotCurrent | Other | NoInspection
    deriving (Eq, Generic, Read, Show)
 
 instance FromJSON IssueType
