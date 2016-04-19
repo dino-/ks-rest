@@ -4,8 +4,10 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 module KS.Rest.Handler.Feedback
-   ( Feedback (..), dummyFeedback
+   ( Feedback (..)
    , handler
+   , missingFeedback
+   , incorrectFeedback
    )
    where
 
@@ -52,6 +54,7 @@ data Feedback = Feedback
    { status :: Status
    , device_id :: T.Text
    , place_id :: Maybe T.Text
+   , name :: Maybe T.Text
    , date :: Int
    , issue_type :: IssueType
    , comment :: Maybe T.Text
@@ -66,6 +69,7 @@ instance FromBSON Feedback where
       (read ("status" `at` doc))
       ("device_id" `at` doc)
       ("place_id" `at` doc)
+      ("name" `at` doc)
       (read ("date" `at` doc))
       (read ("issue_type" `at` doc))
       ("comment" `at` doc)
@@ -75,15 +79,21 @@ instance ToBSON Feedback where
       [ "status" =: (show (status adt))
       , "device_id" =: (device_id adt)
       , "place_id" =: (place_id adt)
+      , "name" =: (name adt)
       , "date" =: (show (date adt))
       , "issue_type" =: (show (issue_type adt))
       , "comment" =: (comment adt)
       ]
 
 
-dummyFeedback :: Feedback
-dummyFeedback = Feedback New "somedevice" Nothing 20160409
-   NoInspection (Just "Restaurant is missing!")
+missingFeedback :: Feedback
+missingFeedback = Feedback New "somedevice" (Just "ChIJS4cRvuHCrIkReU69l8QMHzM")
+   (Just "Name Of Restaurant") 20160409 NoInspection Nothing
+
+
+incorrectFeedback :: Feedback
+incorrectFeedback = Feedback New "somedevice" Nothing Nothing 20160418
+   WrongNameAddr (Just "123 Anystreet, Sometown USA")
 
 
 handler :: Config -> Pool Pipe -> Maybe String

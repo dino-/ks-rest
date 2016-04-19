@@ -32,7 +32,8 @@ import KS.Rest.Config
    )
 import qualified KS.Data.Document as D
 import qualified KS.Rest.Handler.Feedback
-import KS.Rest.Handler.Feedback ( Feedback (..), dummyFeedback )
+import KS.Rest.Handler.Feedback ( Feedback (..)
+   , incorrectFeedback, missingFeedback )
 import qualified KS.Rest.Handler.InspAllName
 import qualified KS.Rest.Handler.InspAllPlaceIDCap
 import qualified KS.Rest.Handler.InspRecentNear
@@ -333,7 +334,10 @@ instance ToSample StatsResults where
       ]
 
 instance ToSample Feedback where
-   toSamples _ = singleSample dummyFeedback
+   toSamples _ = samples
+      [ missingFeedback
+      , incorrectFeedback
+      ]
 
 instance ToSample Value where
    toSamples _ = singleSample $ object
