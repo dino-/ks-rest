@@ -20,7 +20,7 @@ import qualified Data.Text as T
 import Database.Mongo.Util ( lastStatus )
 import Database.MongoDB hiding ( options )
 import GHC.Generics ( Generic )
-import Servant ( ServantErr )
+import Servant ( NoContent (..), ServantErr )
 import Text.Printf ( printf )
 
 import KS.Rest.APIKey ( akRead )
@@ -98,7 +98,7 @@ incorrectFeedback = Feedback New "somedevice" Nothing Nothing 20160418
 
 handler :: Config -> Pool Pipe -> Maybe String
    -> Feedback
-   -> ExceptT ServantErr IO ()
+   -> ExceptT ServantErr IO NoContent
 handler conf pool mbKey feedback = do
    liftIO $ lineM
 
@@ -113,3 +113,5 @@ handler conf pool mbKey feedback = do
       )
 
    liftIO $ infoM lname $ printf "Feedback inserted, result: %s" $ either id id result
+
+   return NoContent

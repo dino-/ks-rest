@@ -120,7 +120,7 @@ type KSAPI
    :<|>  APIVer :> "feedback" :>
          QueryParam "key"     String :>
          ReqBody '[JSON] Feedback :>
-         Post '[JSON] ()
+         Post '[JSON] NoContent
 
    :<|>  APIVer :> "version" :>
          Get '[JSON] Value
