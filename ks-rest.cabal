@@ -12,12 +12,12 @@ description:
 category: Network
 author: Dino Morelli
 data-files:
-    resources/bin/stress.sh
     resources/ks-rest.conf
 extra-source-files:
     changelog.md
     README.md
     util/install.sh
+    util/stress.sh
 
 source-repository head
     type: darcs
