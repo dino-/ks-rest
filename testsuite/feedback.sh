@@ -8,8 +8,10 @@ hostPort="localhost:8610"
 
 apiKey=$(<$HOME/.config/ksnitch/test-apikey)
 
-#feedback='{ "status": "New", "device_id": "a_test_device", "place_id": "ChIJtQic3uZXrIkRxIFU0wH2WWM", "date": 20160409, "issue_type": "Closed", "comment": "This restaurant is closed!" }'
-feedback='{ "status": "New", "device_id": "a_test_device", "place_id": null, "date": 20160409, "issue_type": "Closed", "comment": null }'
+todaysDate=$(date +%Y%m%d)
+
+#feedback="{ \"status\": \"New\", \"device_id\": \"a_test_device\", \"place_id\": \"ChIJtQic3uZXrIkRxIFU0wH2WWM\", \"date\": ${todaysDate}, \"issue_type\": \"Closed\", \"comment\": \"This restaurant is closed!\" }"
+feedback="{ \"status\": \"New\", \"device_id\": \"a_test_device\", \"place_id\": null, \"date\": ${todaysDate}, \"issue_type\": \"Closed\", \"comment\": null }"
 
 curl \
    -v \
