@@ -16,7 +16,7 @@ data-files:
 extra-source-files:
     changelog.md
     README.md
-    util/install.sh
+    util/install.hs
     util/stress.sh
 
 source-repository head
