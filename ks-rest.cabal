@@ -35,7 +35,7 @@ executable ks-rest
         filepath -any,
         hslogger -any,
         http-types -any,
-        ks-library -any,
+        ks-library >=1.13,
         mongoDB -any,
         mtl -any,
         resource-pool -any,
