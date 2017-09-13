@@ -8,13 +8,12 @@ module KS.Rest.Handler.StatsLatest
    where
 
 import Control.Monad.Trans ( liftIO )
-import Control.Monad.Trans.Except ( ExceptT )
 import Data.Aeson ( Value (Object) )
 import Data.Aeson.Bson ( toAeson )
 import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import Database.MongoDB hiding ( Value, options )
-import Servant ( ServantErr )
+import Servant ( Handler )
 import Text.Printf ( printf )
 
 import KS.Rest.APIKey ( akRead )
@@ -28,7 +27,7 @@ import KS.Rest.Util
 handlerBySource
    :: Config -> Pool Pipe
    -> Maybe String -> Maybe T.Text
-   -> ExceptT ServantErr IO StatsResults
+   -> Handler StatsResults
 handlerBySource conf pool mbKey mbSources = do
    liftIO $ lineM
 
@@ -57,7 +56,7 @@ handlerBySource conf pool mbKey mbSources = do
 handlerRecentNear
    :: Config -> Pool Pipe
    -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double
-   -> ExceptT ServantErr IO StatsResults
+   -> Handler StatsResults
 handlerRecentNear conf pool mbKey mbLat mbLng mbDist = do
    liftIO $ lineM
 

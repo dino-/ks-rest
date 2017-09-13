@@ -5,13 +5,12 @@ module KS.Rest.Handler.InspAllPlaceIDCap ( handler )
    where
 
 import Control.Monad.Trans ( liftIO )
-import Control.Monad.Trans.Except ( ExceptT )
 import Data.Bson.Generic ( fromBSON )
 import Data.Maybe ( catMaybes )
 import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import Database.MongoDB hiding ( options )
-import Servant ( ServantErr )
+import Servant ( Handler )
 import Text.Printf ( printf )
 
 import qualified KS.Data.Document as D
@@ -22,7 +21,7 @@ import KS.Rest.Util ( coll_inspections_all, requiredParam, verifyAPIKey )
 
 
 handler :: Config -> Pool Pipe -> T.Text -> Maybe String
-   -> ExceptT ServantErr IO [D.Document]
+   -> Handler [D.Document]
 handler conf pool placeId mbKey = do
    liftIO $ lineM
 

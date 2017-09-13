@@ -5,11 +5,10 @@ module KS.Rest.Handler.Version ( handler )
    where
 
 import Control.Monad.Trans ( liftIO )
-import Control.Monad.Trans.Except ( ExceptT )
 import Data.Aeson ( Value, (.=), object )
 import Data.Version ( showVersion )
 import Paths_ks_rest ( version )
-import Servant ( ServantErr )
+import Servant ( Handler )
 
 import KS.Rest.Log ( lineM )
 
@@ -22,7 +21,7 @@ ksRestServerVersion = showVersion version
 ksRestAPIVersion = "1.1"
 
 
-handler :: ExceptT ServantErr IO Value
+handler :: Handler Value
 handler = do
    liftIO $ lineM
 

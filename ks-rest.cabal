@@ -44,7 +44,6 @@ executable ks-rest
         tce-conf -any,
         text -any,
         time -any,
-        transformers -any,
         wai -any,
         wai-extra -any,
         warp -any

@@ -8,13 +8,12 @@ module KS.Rest.Handler.InspRecentPlaceID
    where
 
 import Control.Monad.Trans ( liftIO )
-import Control.Monad.Trans.Except ( ExceptT )
 import Data.Bson.Generic ( fromBSON )
 import Data.Maybe ( catMaybes )
 import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import Database.MongoDB hiding ( options )
-import Servant ( ServantErr )
+import Servant ( Handler )
 import Text.Printf ( printf )
 
 import qualified KS.Data.Document as D
@@ -30,14 +29,14 @@ defaultDateAfter = 19700101
 
 
 handlerCapture :: Config -> Pool Pipe -> T.Text -> Maybe String -> Maybe Int
-   -> ExceptT ServantErr IO [D.Document]
+   -> Handler [D.Document]
 handlerCapture conf pool placeID mbKey mbAfter =
    handlerPost conf pool mbKey mbAfter (PlaceIDs [placeID])
 
 
 handlerPost :: Config -> Pool Pipe -> Maybe String -> Maybe Int
    -> PlaceIDs
-   -> ExceptT ServantErr IO [D.Document]
+   -> Handler [D.Document]
 handlerPost conf pool mbKey mbAfter (PlaceIDs placeIDs) = do
    liftIO $ lineM
 

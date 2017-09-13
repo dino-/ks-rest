@@ -5,8 +5,8 @@ module KS.Rest.Handler.InspSorted
    ( defaultLimit, handler )
    where
 
+import Control.Monad.Except ( throwError )
 import Control.Monad.Trans ( liftIO )
-import Control.Monad.Trans.Except ( ExceptT, throwE )
 import Data.Bson.Generic ( fromBSON )
 import qualified Data.ByteString.Lazy.Char8 as C
 import Data.Maybe ( catMaybes )
@@ -14,9 +14,10 @@ import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import Database.MongoDB hiding ( Value, options )
 import Servant
-                  ( ServantErr (errBody)
-                  , err400
-                  )
+   ( Handler
+   , ServantErr (errBody)
+   , err400
+   )
 import Text.Printf ( printf )
 
 import qualified KS.Data.Document as D
@@ -34,7 +35,7 @@ handler
    :: Config -> Pool Pipe -> Collection
    -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double
    -> Maybe Limit -> Maybe T.Text
-   -> ExceptT ServantErr IO [D.Document]
+   -> Handler [D.Document]
 handler
    conf pool collection
    mbKey mbLat mbLng mbDist
@@ -96,17 +97,17 @@ metersToEarthRadians m = (mToKm m) / kmPerEarthRadian
       -- milesPerEarthRadian = 3963.2
 
 
-parseSortParam :: T.Text -> ExceptT ServantErr IO Order
+parseSortParam :: T.Text -> Handler Order
 parseSortParam paramValue = do
    ordering <- convertOrdering $ T.take 1 paramValue
    field <- verifyField $ T.drop 1 paramValue
    return $ [ (T.concat ["inspection.", field]) =: ordering ]
 
    where
-      convertOrdering :: T.Text -> ExceptT ServantErr IO Int
+      convertOrdering :: T.Text -> Handler Int
       convertOrdering "+" = return 1
       convertOrdering "-" = return (-1)
-      convertOrdering o   = throwE $ err400 { errBody = C.concat
+      convertOrdering o   = throwError $ err400 { errBody = C.concat
          [ "Cannot parse sort parameter because we got sort ordering '"
          , (C.pack . T.unpack $ o)
          , "' but expected '+' or '-'"
@@ -115,10 +116,10 @@ parseSortParam paramValue = do
       validSortFields :: [T.Text]
       validSortFields = ["date", "score"]
 
-      verifyField :: T.Text -> ExceptT ServantErr IO T.Text
+      verifyField :: T.Text -> Handler T.Text
       verifyField field
          | field `elem` validSortFields = return field
-         | otherwise = throwE $ err400 { errBody = C.concat
+         | otherwise = throwError $ err400 { errBody = C.concat
             [ "Cannot parse sort parameter because we got sort field '"
             , (C.pack . T.unpack $ field)
             , "' but expected one of "

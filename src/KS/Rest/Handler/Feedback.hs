@@ -12,14 +12,13 @@ module KS.Rest.Handler.Feedback
    where
 
 import Control.Monad.Trans ( liftIO )
-import Control.Monad.Trans.Except ( ExceptT )
 import Data.Bson.Generic ( toBSON )
 import Data.Pool ( Pool, withResource )
 import Database.Mongo.Util ( lastStatus )
 import Database.MongoDB hiding ( options )
 import KS.Data.Feedback ( Feedback (..)
    , IssueType (NoInspection, WrongNameAddr), Status (New) )
-import Servant ( NoContent (..), ServantErr )
+import Servant ( Handler, NoContent (..) )
 import Text.Printf ( printf )
 
 import KS.Rest.APIKey ( akRead )
@@ -40,7 +39,7 @@ incorrectFeedback = Feedback New "somedevice" Nothing Nothing 20160418
 
 handler :: Config -> Pool Pipe -> Maybe String
    -> Feedback
-   -> ExceptT ServantErr IO NoContent
+   -> Handler NoContent
 handler conf pool mbKey feedback = do
    liftIO $ lineM
 

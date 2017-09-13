@@ -6,13 +6,12 @@ module KS.Rest.Handler.InspRecentNear
    where
 
 import Control.Monad.Trans ( liftIO )
-import Control.Monad.Trans.Except ( ExceptT )
 import Data.Aeson ( Value (Object) )
 import Data.Aeson.Bson ( toAeson )
 import Data.Pool ( Pool, withResource )
 import qualified Data.Text as T
 import Database.MongoDB hiding ( Value, options )
-import Servant ( ServantErr )
+import Servant ( Handler )
 import Text.Printf ( printf )
 
 import KS.Rest.APIKey ( akRead )
@@ -29,7 +28,7 @@ defaultMinScore = 0.0
 handler
    :: Config -> Pool Pipe
    -> Maybe String -> Maybe Double -> Maybe Double -> Maybe Double -> Maybe Double
-   -> ExceptT ServantErr IO ByLocResults
+   -> Handler ByLocResults
 handler conf pool mbKey mbLat mbLng mbDist mbMinScore = do
    liftIO $ lineM
 
