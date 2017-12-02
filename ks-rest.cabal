@@ -20,8 +20,8 @@ extra-source-files:
     util/stress.sh
 
 source-repository head
-    type: darcs
-    location: http://hub.darcs.net/dino/ks-rest
+    type: git
+    location: https://github.com/dino-/ks-rest.git
 
 executable ks-rest
     main-is: ks-rest.hs
