@@ -1,0 +1,92 @@
+name: ks-rest
+version: '1.17'
+synopsis: REST server for KitchenSnitch
+description: REST server for the KitchenSnitch project. This server is for accessing the back-end KS database data which is currently stored in a MongoDB instance.
+license: ISC
+copyright: 2015 Dino Morelli
+author: Dino Morelli
+maintainer: Dino Morelli <dino@ui3.info>
+category: Network
+# data-files:
+#     resources/ks-rest.conf
+extra-source-files:
+- changelog.md
+- README.md
+- util/install.hs
+- util/stress.sh
+
+github: dino-/ks-rest
+
+ghc-options:
+- -fwarn-tabs
+- -Wall
+- -Wcompat
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wredundant-constraints
+
+#default-extensions:
+#- BangPatterns
+#- DeriveFoldable
+#- DeriveFunctor
+#- DeriveGeneric
+#- DeriveLift
+#- DeriveTraversable
+#- EmptyCase
+#- FlexibleContexts
+#- FlexibleInstances
+#- GeneralizedNewtypeDeriving
+#- InstanceSigs
+#- KindSignatures
+#- LambdaCase
+#- MultiParamTypeClasses
+#- MultiWayIf
+#- NamedFieldPuns
+#- ScopedTypeVariables
+#- StandaloneDeriving
+#- TupleSections
+#- TypeFamilies
+
+dependencies:
+- base >=3 && <5
+- bytestring
+- filepath
+- text
+
+library:
+  source-dirs: src/lib
+
+executables:
+
+  ks-rest:
+    main: Main.hs
+    source-dirs: src/ks-rest
+    default-extensions: OverloadedStrings
+    dependencies:
+    - aeson
+    - bson
+    - bson-generic
+    - fast-logger
+    - hslogger
+    - http-types
+    - ks-library >=1.13
+    - ks-rest
+    - mongoDB
+    - mtl
+    - resource-pool
+    - servant-docs
+    - servant-server
+    - tce-conf
+    - time
+    - wai
+    - wai-extra
+    - warp
+    # - warp -any
+
+  ks-api-keygen:
+    main: Main.hs
+    source-dirs: src/ks-api-keygen
+    dependencies:
+    - ks-rest
+    - SHA
+
