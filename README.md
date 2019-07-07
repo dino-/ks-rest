@@ -13,56 +13,30 @@ accessing the back-end KS database data which is currently stored
 in a MongoDB instance.
 
 
-## Installing
+## Building and installation
 
+Building the source
 
-## Building from source
+    $ stack build
 
-Make sure you have `ghc 7.10.x`, `cabal-install` and `darcs` installed.
+Running in development
 
-Update your cabal list
+    $ stack exec ks-rest -- PATH/TO/DIR/CONTAINING/CONF
 
-    $ cabal update
-
-And install some native deps that `cabal` can't do for you
-
-On Ubuntu:
-
-    # apt-get install --reinstall g++ 
-
-Get the `ks-rest` source code
-
-    $ darcs get http://hub.darcs.net/dino/ks-rest
-
-Update your cabal library and tools, we need a modern version
-
-    $ cabal install Cabal cabal-install
-
-Set up a sandbox for building (if you wish to use a sandbox)
-
-    $ mkdir ~/.cabal/sandbox
-    $ cabal sandbox init --sandbox=/home/YOU/.cabal/sandbox/kitchensnitch
-
-Then install the dependencies
-
-    $ cabal install --enable-tests --only-dep
-
-This will build for quite some time, when it's done, you can build
-ks-download:
-
-
-### Building for development
-
-    $ cabal configure --enable-tests
-    $ cabal build
-    $ cabal test
-
-And you should be good for development from here. Run it:
-
-    $ cabal run ks-rest -- PATH/TO/DIR/CONTAINING/CONF
+Tests for this project are a set of shell scripts, not automated, in the `testsite` directory. The running `ks-rest` server will need to be hooked up to a MongoDB instance for most of these to work.
 
 
 ### Building for deployment
+
+We recommend using the `hsinstall` tool which is available for Linux distributions as a portable AppImage [here]()
+
+Usage would be
+
+    $ hsinstall-x86_64.AppImage -p /opt/ksnitch
+
+If you must do it without `hsinstall`, I suggest this:
+
+    $ stack install --local-bin-path /opt/ksnitch
 
 This will build everything into a deployable directory structure
 that you can put somewhere like `/opt/` for instance.
@@ -73,18 +47,11 @@ that you can put somewhere like `/opt/` for instance.
     $ popd
 
 
-Running the server. Once you get it installed, run like this:
+Once you get it installed, run like this:
 
     $ ks-rest PATH/TO/DIR/CONTAINING/CONF
 
 
 ## Contact
 
-### Reporting Bugs
-
-### Authors
-
 Dino Morelli <dino@ui3.info>
-
-
-## Links
