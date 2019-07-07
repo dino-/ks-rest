@@ -40,7 +40,7 @@ utility version 2.5 for this procedure.
 Now, starting in the root of the project, do this, where VER is the version of
 ks-rest you are building:
 
-    $ hsinstall --prefix=ks-rest/ks-rest_VER
+    $ hsinstall --prefix=ks-rest/ks-rest_VER/usr
     $ mkdir ks-rest/ks-rest_VER/DEBIAN
     $ cp -t ks-rest/ks-rest_VER/DEBIAN util/resources/DEBIAN/control util/resources/DEBIAN/conffiles
 
