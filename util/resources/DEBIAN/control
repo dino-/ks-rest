@@ -1,0 +1,7 @@
+Package: ks-rest
+Architecture: all
+Maintainer: Dino Morelli
+Depends: debconf (>= 0.5.00)
+Priority: optional
+Version: 1.17
+Description: Kitchen Snitch REST server
