@@ -35,7 +35,7 @@ Our production servers have so far been Ubuntu, so what follows are
 instructions for building a .deb file which can be installed with dpkg.
 
 You will need the [hsinstall](https://github.com/dino-/hsinstall/releases)
-utility version 2.5 for this procedure.
+utility version 2.6 or later for this procedure.
 
 Now, starting in the root of the project, do this, where VER is the version of
 ks-rest you are building:
