@@ -1,0 +1,13 @@
+[Unit]
+Description=Kitchen Snitch REST server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/ks-rest /home/ksadmin/.config/ksnitch
+User=ksadmin
+Group=staff
+PIDFile=/var/run/ks-rest.pid
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
