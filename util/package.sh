@@ -1,6 +1,7 @@
 #! /bin/bash
 
-# This script will package the project as a Debian .deb file for installation
+# This script will build and package the project as a Debian .deb file for
+# installation.
 
 # Extract the project version from the Haskell build file
 version=$(perl -ne "print \"\$1\n\" if /version: +'(.*)'/" package.yaml)
@@ -17,5 +18,8 @@ cp -rv util/resources/* "$distRoot"
 # Update the Debian control file with the correct project version
 perl -pi -e "s/Version: .*/Version: ${version}/" "${distRoot}/DEBIAN/control"
 
-sudo chown -R root:root "$distRoot"
-dpkg-deb --build "$distRoot"
+# Construct the .deb file
+dpkg-deb --root-owner-group --build "$distRoot"
+
+echo "Complete."
+echo "To see the file's contents: $ dpkg-deb -c ks-rest/ks-rest_${version}.deb"
