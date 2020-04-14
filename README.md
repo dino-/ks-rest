@@ -37,33 +37,23 @@ instructions for building a .deb file which can be installed with dpkg.
 You will need the [hsinstall](https://github.com/dino-/hsinstall/releases)
 utility version 2.6 or later for this procedure.
 
-Now, starting in the root of the project, do this, where VER is the version of
-ks-rest you are building:
+Run the script `./util/package.sh` and you should see a
+`ks-rest/ks-rest_VER.deb` file with the current version. Check the contents if
+you wish with `dpkg-deb -c ...` This file can be added to the ks-rest release
+page on github or distributed however you wish.
 
-    $ hsinstall --prefix=ks-rest/ks-rest_VER/usr
-    $ mkdir ks-rest/ks-rest_VER/DEBIAN
-    $ cp -t ks-rest/ks-rest_VER/DEBIAN util/resources/DEBIAN/control util/resources/DEBIAN/conffiles
+If you don't care about making a Debian .deb file, build a deployable directory like this:
 
-Edit `ks-rest/ks-rest_VER/DEBIAN/control` to make sure the version
-matches what you're building.
+    $ hsinstall --prefix=ks-rest-VER
 
-    $ sudo chown -R root:root ks-rest/ks-rest_VER
-    $ dpkg-deb --build ks-rest/ks-rest_VER
+Once ks-rest is installed it can be started with
 
-And you should see a `ks-rest/ks-rest_VER.deb` file. Check the contents
-if you wish with `dpkg-deb -c ...` This file can be added to the ks-rest
-release page on github or distributed however you wish.
+    # systemctl enable --now ks-rest
 
 If you must do it without `hsinstall`, I suggest this:
 
     $ mkdir -p ks-rest/ks-rest_VER/usr/bin
     $ stack install --local-bin-path ks-rest/ks-rest_VER/usr/bin
-
-And then follow the instructions above starting with the `mkdir ...DEBIAN` part.
-
-Once ks-rest is installed, run like this:
-
-    $ ks-rest PATH/TO/DIR/CONTAINING/CONF
 
 Some of these notes exist in a more detailed form on the developer wiki.
 
