@@ -7,12 +7,19 @@ copyright: 2015 Dino Morelli
 author: Dino Morelli
 maintainer: Dino Morelli <dino@ui3.info>
 category: Network
-# data-files:
-#     resources/ks-rest.conf
 extra-source-files:
 - changelog.md
+- .gitignore
+- hsinstall/share/ks-rest/resources/ks-rest.conf
+- package.yaml
 - README.md
+- stack.yaml
+- stack.yaml.lock
+- testsuite/*
+- util/package.sh
 - util/stress.sh
+- util/resources/etc/systemd/system/ks-rest.service
+- util/resources/DEBIAN/*
 
 github: dino-/ks-rest
 
@@ -23,28 +30,6 @@ ghc-options:
 - -Wincomplete-record-updates
 - -Wincomplete-uni-patterns
 - -Wredundant-constraints
-
-#default-extensions:
-#- BangPatterns
-#- DeriveFoldable
-#- DeriveFunctor
-#- DeriveGeneric
-#- DeriveLift
-#- DeriveTraversable
-#- EmptyCase
-#- FlexibleContexts
-#- FlexibleInstances
-#- GeneralizedNewtypeDeriving
-#- InstanceSigs
-#- KindSignatures
-#- LambdaCase
-#- MultiParamTypeClasses
-#- MultiWayIf
-#- NamedFieldPuns
-#- ScopedTypeVariables
-#- StandaloneDeriving
-#- TupleSections
-#- TypeFamilies
 
 dependencies:
 - base >=3 && <5
