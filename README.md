@@ -37,6 +37,9 @@ instructions for building a .deb file which can be installed with dpkg.
 You will need the [hsinstall](https://github.com/dino-/hsinstall/releases)
 utility version 2.6 or later for this procedure.
 
+If you get an error during compile about `zlib.h` you may need to install a
+native library. On Debian-based distros, install `zlib1g-dev`
+
 Run the script `./util/package.sh` and you should see a
 `ks-rest/ks-rest_VER.deb` file with the current version. Check the contents if
 you wish with `dpkg-deb -c ...` This file can be added to the ks-rest release
