@@ -12,7 +12,6 @@ category: Network
 extra-source-files:
 - changelog.md
 - README.md
-- util/install.hs
 - util/stress.sh
 
 github: dino-/ks-rest
